@@ -3,7 +3,7 @@ function getCookie(name) {
     return r ? r[1] : undefined;
 }
 
-$(document).ready(function(){
+$(document).ready(function () {
     // 向后端获取城区信息
     $.get("/api/v1.0/areas", function (resp) {
         if (resp.code == "0") {
@@ -28,11 +28,15 @@ $(document).ready(function(){
 
         // 处理表单数据
         var data = {};
-        $("#form-house-info").serializeArray().map(function(x) { data[x.name]=x.value });
+        $("#form-house-info").serializeArray().map(function (x) {
+            data[x.name] = x.value
+        });
 
         // 收集设置id信息
         var facility = [];
-        $(":checked[name=facility]").each(function(index, x){facility[index] = $(x).val()});
+        $(":checked[name=facility]").each(function (index, x) {
+            facility[index] = $(x).val()
+        });
 
         data.facility = facility;
 
@@ -77,7 +81,10 @@ $(document).ready(function(){
                 if (resp.code == "4101") {
                     location.href = "/login.html";
                 } else if (resp.code == "0") {
-                    $(".house-image-cons").append('<img src="' + resp.data.image_url +'">');
+                    var data = resp.data;
+                    for (var i = 0; i < data.length; i++) {
+                        $(".house-image-cons").append('<img src="' + data[i] + '">');
+                    }
                 } else {
                     alert(resp.msg);
                 }

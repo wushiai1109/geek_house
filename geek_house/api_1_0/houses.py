@@ -1,4 +1,5 @@
 # coding:utf-8
+from werkzeug.datastructures import ImmutableMultiDict
 
 from . import api
 from flask import g, current_app, jsonify, request, session
@@ -164,49 +165,58 @@ def save_house_image():
     """保存房屋的图片
     参数 图片 房屋的id
     """
-    image_file = request.files.get("house_image")
-    house_id = request.form.get("house_id")
 
-    if not all([image_file, house_id]):
+    house_id = request.form.get("house_id")
+    house_image = request.files.get("house_image")
+
+    if not all([house_image, house_id]):
         return jsonify(code=RET.PARAMERR, msg="参数错误")
 
-    # 判断house_id正确性
-    try:
-        house = House.query.get(house_id)
-    except Exception as e:
-        current_app.logger.error(e)
-        return jsonify(code=RET.DBERR, msg="数据库异常")
+    image_file_dict = ImmutableMultiDict(request.files).lists()
+    image_file_list = []
+    for house_image in image_file_dict:
+        image_file_list = house_image[1]
 
-    if house is None:  # if not house:
-        return jsonify(code=RET.NODATA, msg="房屋不存在")
+    data = []
+    for image_file in image_file_list:
+        # 判断house_id正确性
+        try:
+            house = House.query.get(house_id)
+        except Exception as e:
+            current_app.logger.error(e)
+            return jsonify(code=RET.DBERR, msg="数据库异常")
 
-    image_data = image_file.read()
-    # 保存图片到七牛中
-    try:
-        file_name = storage(image_data)
-    except Exception as e:
-        current_app.logger.error(e)
-        return jsonify(code=RET.THIRDERR, msg="保存图片失败")
+        if house is None:  # if not house:
+            return jsonify(code=RET.NODATA, msg="房屋不存在")
 
-    # 保存图片信息到数据库中
-    house_image = HouseImage(house_id=house_id, url=file_name)
-    db.session.add(house_image)
+        image_data = image_file.read()
+        # 保存图片到七牛中
+        try:
+            file_name = storage(image_data)
+        except Exception as e:
+            current_app.logger.error(e)
+            return jsonify(code=RET.THIRDERR, msg="保存图片失败")
 
-    # 处理房屋的主图片
-    if not house.index_image_url:
-        house.index_image_url = file_name
-        db.session.add(house)
+        # 保存图片信息到数据库中
+        house_image = HouseImage(house_id=house_id, url=file_name)
+        db.session.add(house_image)
 
-    try:
-        db.session.commit()
-    except Exception as e:
-        current_app.logger.error(e)
-        db.session.rollback()
-        return jsonify(code=RET.DBERR, msg="保存图片数据异常")
+        # 处理房屋的主图片
+        if not house.index_image_url:
+            house.index_image_url = file_name
+            db.session.add(house)
 
-    image_url = constants.QINIU_URL_DOMAIN + file_name
+        try:
+            db.session.commit()
+        except Exception as e:
+            current_app.logger.error(e)
+            db.session.rollback()
+            return jsonify(code=RET.DBERR, msg="保存图片数据异常")
 
-    return jsonify(code=RET.OK, msg="OK", data={"image_url": image_url})
+        image_url = constants.QINIU_URL_DOMAIN + file_name
+        data.append(image_url)
+
+    return jsonify(code=RET.OK, msg="OK", data=data)
 
 
 @api.route("/user/houses", methods=["GET"])
