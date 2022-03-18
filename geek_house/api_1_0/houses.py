@@ -202,7 +202,7 @@ def save_house_image():
         db.session.add(house_image)
 
         # 处理房屋的主图片
-        if not house.index_image_url:
+        if not house.index_image_url or house.index_image_url=="no_picture":
             house.index_image_url = file_name
             db.session.add(house)
 

@@ -1,6 +1,7 @@
 # coding:utf-8
 
 import redis
+from urllib import parse
 
 
 class Config(object):
@@ -13,7 +14,8 @@ class Config(object):
     # 数据库
     # SQLALCHEMY_DATABASE_URI用于连接的数据库URI：sqlite:////tmp/test.db 或 mysql://username:password@server/db
     # http://www.pythondoc.com/flask-sqlalchemy/config.html
-    SQLALCHEMY_DATABASE_URI = "mysql://root:@WSAwsa18723746541@localhost:3306/geek_house"
+    SQLALCHEMY_DATABASE_URI = "mysql://root:{}@localhost:3306/geek_house?charset=utf8".format(
+        parse.quote_plus("@WSAwsa18723746541"))
     # https://www.jianshu.com/p/6e8abf8f5d61 这个配置键的作用是：如果设置成 True (默认情况)，Flask-SQLAlchemy 将会追踪对象的修改并且发送信号。这需要额外的内存， 如果不必要的可以禁用它。
     # 配置完成后即可在shell模式下测试，通过db.create_all()创建数据库，然后添加一些行，用db.session.add()添加，最后用db.session.commit()提交（修改行，删除行等不做赘述）。检验方式可以继续在shell模式下用命令查你插入行的id值是否已经添加，或者借助图形化工具MySQLWorkbench检验。
     SQLALCHEMY_TRACK_MODIFICATIONS = True

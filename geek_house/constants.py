@@ -1,6 +1,5 @@
 # coding:utf-8
 
-
 # 图片验证码的redis有效期, 单位：秒
 IMAGE_CODE_REDIS_EXPIRES = 180
 
@@ -18,7 +17,8 @@ LOGIN_ERROR_FORBID_TIME = 600
 
 # 七牛云的域名
 QINIU_URL_DOMAIN = "http://www.wushiai.cn/"
-# 城区信息的缓存时间, 单位：秒
+
+# 地址信息的缓存时间, 单位：秒
 AREA_INFO_REDIS_CACHE_EXPIRES = 7200
 
 # 首页展示最多的房屋数量
@@ -34,10 +34,10 @@ HOUSE_DETAIL_COMMENT_DISPLAY_COUNTS = 30
 HOUSE_DETAIL_REDIS_EXPIRE_SECOND = 7200
 
 # 房屋列表页面每页数据容量
-HOUSE_LIST_PAGE_CAPACITY = 2
+HOUSE_LIST_PAGE_CAPACITY = 3
 
 # 房屋列表页面页数缓存时间，单位秒
-HOUES_LIST_PAGE_REDIS_CACHE_EXPIRES = 7200
+HOUES_LIST_PAGE_REDIS_CACHE_EXPIRES = 10
 
 # 支付宝的网关地址（支付地址域名）
 ALIPAY_URL_PREFIX = "https://openapi.alipaydev.com/gateway.do?"

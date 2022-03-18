@@ -1,8 +1,8 @@
 """init tables
 
-Revision ID: bff11cc0d8a0
+Revision ID: a2ae4d57c025
 Revises: 
-Create Date: 2021-04-07 17:59:48.862681
+Create Date: 2022-03-18 21:03:50.286257
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bff11cc0d8a0'
+revision = 'a2ae4d57c025'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -98,6 +98,7 @@ def upgrade():
     sa.Column('amount', sa.Integer(), nullable=False),
     sa.Column('status', sa.Enum('WAIT_ACCEPT', 'WAIT_PAYMENT', 'PAID', 'WAIT_COMMENT', 'COMPLETE', 'CANCELED', 'REJECTED'), nullable=True),
     sa.Column('comment', sa.Text(), nullable=True),
+    sa.Column('trade_no', sa.String(length=80), nullable=True),
     sa.ForeignKeyConstraint(['house_id'], ['ih_house_info.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['ih_user_profile.id'], ),
     sa.PrimaryKeyConstraint('id')

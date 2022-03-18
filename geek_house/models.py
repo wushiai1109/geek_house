@@ -128,7 +128,7 @@ class House(BaseModel, db.Model):
     min_days = db.Column(db.Integer, default=1)  # 最少入住天数
     max_days = db.Column(db.Integer, default=0)  # 最多入住天数，0表示不限制
     order_count = db.Column(db.Integer, default=0)  # 预订完成的该房屋的订单数
-    index_image_url = db.Column(db.String(256), default="")  # 房屋主图片的路径
+    index_image_url = db.Column(db.String(256), default="no_picture")  # 房屋主图片的路径
     facilities = db.relationship("Facility", secondary=house_facility)  # 房屋的设施
     images = db.relationship("HouseImage")  # 房屋的图片
     orders = db.relationship("Order", backref="house")  # 房屋的订单

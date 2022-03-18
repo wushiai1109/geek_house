@@ -41,6 +41,11 @@
         <button class="filter-btn" type="button" data-toggle="modal" data-target="#area-modal"><span class="fl"
                                                                                                      id="area-btn">选择地址</span><span
                 class="fr"><i class="fa fa-map-marker fa-lg fa-fw"></i></span></button>
+        <div data-toggle="distpicker" class="search-bar">
+            <select class="filter-btn" data-province="--- 选择省 ---"></select>
+            <select class="filter-btn" data-city="--- 选择市 ---"></select>
+            <select class="filter-btn" data-district="--- 选择区（县） ---"></select>
+        </div>
         <button class="filter-btn" type="button" data-toggle="modal" data-target="#start-date-modal"><span class="fl"
                                                                                                            id="start-date-btn">入住日期</span><span
                 class="fr"><i class="fa fa-calendar fa-lg fa-fw"></i></span></button>
@@ -112,6 +117,7 @@
 </div>
 
 <script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/distpicker.js"></script>
 <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
 <script src="/static/plugins/swiper/js/swiper.jquery.min.js"></script>
 <script src="/static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
