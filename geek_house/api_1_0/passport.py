@@ -5,7 +5,7 @@ from flask import request, jsonify, current_app, session
 from geek_house.utils.response_code import RET
 from geek_house.utils.image_storage import storage
 from geek_house import redis_store, db, constants
-from geek_house.models import User
+from geek_house.models import GeekHouseUser
 from sqlalchemy.exc import IntegrityError  # 重复键
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
@@ -82,7 +82,7 @@ def register():
     # 用户登录  password ="123456"  "abc"  sha256      sha1   hxosufodsofdihsofho
 
     # 保存用户的注册数据到数据库中
-    user = User(name=mobile, mobile=mobile)
+    user = GeekHouseUser(name=mobile, mobile=mobile)
     # user.generate_password_hash(password)
 
     user.password = password  # 设置属性
@@ -144,7 +144,7 @@ def login():
 
     # 从数据库中根据手机号查询用户的数据对象
     try:
-        user = User.query.filter_by(mobile=mobile).first()
+        user = GeekHouseUser.query.filter_by(mobile=mobile).first()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="获取用户信息失败")

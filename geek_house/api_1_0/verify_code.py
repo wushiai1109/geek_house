@@ -4,7 +4,7 @@ from geek_house.utils.captcha.captcha import captcha
 from geek_house import redis_store, constants, db
 from flask import current_app, jsonify, make_response, request
 from geek_house.utils.response_code import RET
-from geek_house.models import User
+from geek_house.models import GeekHouseUser
 import random
 from geek_house.libs.CCP import CCP
 from geek_house.tasks.task_sms import send_sms
@@ -100,7 +100,7 @@ def get_sms_code(mobile):
 
     # 判断手机号是否存在
     try:
-        user = User.query.filter_by(mobile=mobile).first()
+        user = GeekHouseUser.query.filter_by(mobile=mobile).first()
     except Exception as e:
         current_app.logger.error(e)
     else:

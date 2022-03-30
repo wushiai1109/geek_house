@@ -5,7 +5,7 @@ from geek_house.utils.commons import login_required
 from flask import g, current_app, jsonify, request, session
 from geek_house.utils.response_code import RET
 from geek_house.utils.image_storage import storage
-from geek_house.models import User
+from geek_house.models import GeekHouseUser
 from geek_house import db, constants
 
 
@@ -35,7 +35,7 @@ def set_user_avatar():
 
     # 保存文件名到数据库中
     try:
-        User.query.filter_by(id=user_id).update({"avatar_url": file_name})
+        GeekHouseUser.query.filter_by(id=user_id).update({"avatar_url": file_name})
         db.session.commit()
     except Exception as e:
         db.session.rollback()
@@ -65,7 +65,7 @@ def change_user_name():
 
     # 保存用户昵称name，并同时判断name是否重复（利用数据库的唯一索引)
     try:
-        User.query.filter_by(id=user_id).update({"name": name})
+        GeekHouseUser.query.filter_by(id=user_id).update({"name": name})
         db.session.commit()
     except Exception as e:
         current_app.logger.error(e)
@@ -84,7 +84,7 @@ def get_user_profile():
     user_id = g.user_id
     # 查询数据库获取个人信息
     try:
-        user = User.query.get(user_id)
+        user = GeekHouseUser.query.get(user_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="获取用户信息失败")
@@ -103,7 +103,7 @@ def get_user_auth():
 
     # 在数据库中查询信息
     try:
-        user = User.query.get(user_id)
+        user = GeekHouseUser.query.get(user_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="获取用户实名信息失败")
@@ -134,7 +134,7 @@ def set_user_auth():
 
     # 保存用户的姓名与身份证号
     try:
-        User.query.filter_by(id=user_id, real_name=None, id_card=None).update(
+        GeekHouseUser.query.filter_by(id=user_id, real_name=None, id_card=None).update(
             {"real_name": real_name, "id_card": id_card})
         db.session.commit()
     except Exception as e:

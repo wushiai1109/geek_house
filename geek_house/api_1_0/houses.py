@@ -4,7 +4,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from . import api
 from flask import g, current_app, jsonify, request, session
 from geek_house.utils.response_code import RET
-from geek_house.models import House, Facility, HouseImage, User, Order
+from geek_house.models import GeekHouseInfo, GeekHouseFacilityInfo, GeekHouseImage, GeekHouseUser, GeekHouseOrder
 from geek_house import db, constants, redis_store
 from geek_house.utils.commons import login_required
 from geek_house.utils.image_storage import storage
@@ -119,7 +119,7 @@ def save_house_info():
     #     return jsonify(code=RET.NODATA, msg="城区信息有误")
 
     # 保存房屋信息
-    house = House(
+    house = GeekHouseInfo(
         user_id=user_id,
         # area_id=area_id,
         title=title,
@@ -143,7 +143,7 @@ def save_house_info():
         # ["7","8"]
         try:
             # select  * from ih_facility_info where id in []
-            facilities = Facility.query.filter(Facility.id.in_(facility_ids)).all()
+            facilities = GeekHouseFacilityInfo.query.filter(GeekHouseFacilityInfo.id.in_(facility_ids)).all()
         except Exception as e:
             current_app.logger.error(e)
             return jsonify(code=RET.DBERR, msg="数据库异常")
@@ -187,7 +187,7 @@ def save_house_image():
     for image_file in image_file_list:
         # 判断house_id正确性
         try:
-            house = House.query.get(house_id)
+            house = GeekHouseInfo.query.get(house_id)
         except Exception as e:
             current_app.logger.error(e)
             return jsonify(code=RET.DBERR, msg="数据库异常")
@@ -204,7 +204,7 @@ def save_house_image():
             return jsonify(code=RET.THIRDERR, msg="保存图片失败")
 
         # 保存图片信息到数据库中
-        house_image = HouseImage(house_id=house_id, url=file_name)
+        house_image = GeekHouseImage(house_id=house_id, url=file_name)
         db.session.add(house_image)
 
         # 处理房屋的主图片
@@ -233,7 +233,7 @@ def get_user_houses():
 
     try:
         # House.query.filter_by(user_id=user_id)
-        user = User.query.get(user_id)
+        user = GeekHouseUser.query.get(user_id)
         houses = user.houses
     except Exception as e:
         current_app.logger.error(e)
@@ -264,7 +264,8 @@ def get_house_index():
     else:
         try:
             # 查询数据库，返回房屋订单数目最多的5条数据
-            houses = House.query.order_by(House.order_count.desc()).limit(constants.HOME_PAGE_MAX_HOUSES)
+            houses = GeekHouseInfo.query.order_by(GeekHouseInfo.order_count.desc()).limit(
+                constants.HOME_PAGE_MAX_HOUSES)
         except Exception as e:
             current_app.logger.error(e)
             return jsonify(code=RET.DBERR, msg="查询数据失败")
@@ -314,7 +315,7 @@ def get_house_detail(house_id):
 
     # 查询数据库
     try:
-        house = House.query.get(house_id)
+        house = GeekHouseInfo.query.get(house_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="查询数据失败")
@@ -405,11 +406,12 @@ def get_house_list():
     try:
         if start_date and end_date:
             # 查询冲突的订单
-            conflict_orders = Order.query.filter(Order.begin_date <= end_date, Order.end_date >= start_date).all()
+            conflict_orders = GeekHouseOrder.query.filter(GeekHouseOrder.begin_date <= end_date,
+                                                          GeekHouseOrder.end_date >= start_date).all()
         elif start_date:
-            conflict_orders = Order.query.filter(Order.end_date >= start_date).all()
+            conflict_orders = GeekHouseOrder.query.filter(GeekHouseOrder.end_date >= start_date).all()
         elif end_date:
-            conflict_orders = Order.query.filter(Order.begin_date <= end_date).all()
+            conflict_orders = GeekHouseOrder.query.filter(GeekHouseOrder.begin_date <= end_date).all()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="数据库异常")
@@ -420,24 +422,24 @@ def get_house_list():
 
         # 如果冲突的房屋id不为空，向查询参数中添加条件
         if conflict_house_ids:
-            filter_params.append(House.id.notin_(conflict_house_ids))
+            filter_params.append(GeekHouseInfo.id.notin_(conflict_house_ids))
 
     # 区域条件
     # if area_id:
     #     filter_params.append(House.area_id == area_id)
 
-    filter_params.append(House.address.like("%" + aname + "%" + detail_aname + "%"))
+    filter_params.append(GeekHouseInfo.address.like("%" + aname + "%" + detail_aname + "%"))
 
     # 查询数据库
     # 补充排序条件
     if sort_key == "booking":  # 入住做多
-        house_query = House.query.filter(*filter_params).order_by(House.order_count.desc())
+        house_query = GeekHouseInfo.query.filter(*filter_params).order_by(GeekHouseInfo.order_count.desc())
     elif sort_key == "price-inc":
-        house_query = House.query.filter(*filter_params).order_by(House.price.asc())
+        house_query = GeekHouseInfo.query.filter(*filter_params).order_by(GeekHouseInfo.price.asc())
     elif sort_key == "price-des":
-        house_query = House.query.filter(*filter_params).order_by(House.price.desc())
+        house_query = GeekHouseInfo.query.filter(*filter_params).order_by(GeekHouseInfo.price.desc())
     else:  # 新旧
-        house_query = House.query.filter(*filter_params).order_by(House.create_time.desc())
+        house_query = GeekHouseInfo.query.filter(*filter_params).order_by(GeekHouseInfo.create_time.desc())
 
     # 处理分页
     try:

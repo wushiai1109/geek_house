@@ -2,7 +2,7 @@
 
 from . import api
 from geek_house.utils.commons import login_required
-from geek_house.models import Order
+from geek_house.models import GeekHouseOrder
 from flask import g, current_app, jsonify, request
 from geek_house.utils.response_code import RET
 from alipay import AliPay
@@ -18,8 +18,8 @@ def order_pay(order_id):
 
     # 判断订单状态
     try:
-        order = Order.query.filter(Order.id == order_id, Order.user_id == user_id,
-                                   Order.status == "WAIT_PAYMENT").first()
+        order = GeekHouseOrder.query.filter(GeekHouseOrder.id == order_id, GeekHouseOrder.user_id == user_id,
+                                            GeekHouseOrder.status == "WAIT_PAYMENT").first()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="数据库异常")
@@ -84,7 +84,7 @@ def save_order_payment_result():
         order_id = alipay_dict.get("out_trade_no")
         trade_no = alipay_dict.get("trade_no")  # 支付宝的交易号
         try:
-            Order.query.filter_by(id=order_id).update({"status": "WAIT_COMMENT", "trade_no": trade_no})
+            GeekHouseOrder.query.filter_by(id=order_id).update({"status": "WAIT_COMMENT", "trade_no": trade_no})
             db.session.commit()
         except Exception as e:
             current_app.logger.error(e)

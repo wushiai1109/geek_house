@@ -6,7 +6,7 @@ from flask import request, g, jsonify, current_app
 from geek_house import db, redis_store
 from geek_house.utils.commons import login_required
 from geek_house.utils.response_code import RET
-from geek_house.models import House, Order
+from geek_house.models import GeekHouseInfo, GeekHouseOrder
 from . import api
 
 
@@ -43,7 +43,7 @@ def save_order():
 
     # 查询房屋是否存在
     try:
-        house = House.query.get(house_id)
+        house = GeekHouseInfo.query.get(house_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="获取房屋信息失败")
@@ -57,8 +57,8 @@ def save_order():
     # 确保用户预订的时间内，房屋没有被别人下单
     try:
         # 查询时间冲突的订单数
-        count = Order.query.filter(Order.house_id == house_id, Order.begin_date <= end_date,
-                                   Order.end_date >= start_date).count()
+        count = GeekHouseOrder.query.filter(GeekHouseOrder.house_id == house_id, GeekHouseOrder.begin_date <= end_date,
+                                            GeekHouseOrder.end_date >= start_date).count()
         #  select count(*) from order where ....
     except Exception as e:
         current_app.logger.error(e)
@@ -70,7 +70,7 @@ def save_order():
     amount = days * house.price
 
     # 保存订单数据
-    order = Order(
+    order = GeekHouseOrder(
         house_id=house_id,
         user_id=user_id,
         begin_date=start_date,
@@ -104,13 +104,13 @@ def get_user_orders():
         if "landlord" == role:
             # 以房东的身份查询订单
             # 先查询属于自己的房子有哪些
-            houses = House.query.filter(House.user_id == user_id).all()
+            houses = GeekHouseInfo.query.filter(GeekHouseInfo.user_id == user_id).all()
             houses_ids = [house.id for house in houses]
             # 再查询预订了自己房子的订单
-            orders = Order.query.filter(Order.house_id.in_(houses_ids)).order_by(Order.create_time.desc()).all()
+            orders = GeekHouseOrder.query.filter(GeekHouseOrder.house_id.in_(houses_ids)).order_by(GeekHouseOrder.create_time.desc()).all()
         else:
             # 以房客的身份查询订单， 查询自己预订的订单
-            orders = Order.query.filter(Order.user_id == user_id).order_by(Order.create_time.desc()).all()
+            orders = GeekHouseOrder.query.filter(GeekHouseOrder.user_id == user_id).order_by(GeekHouseOrder.create_time.desc()).all()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="查询订单信息失败")
@@ -142,7 +142,7 @@ def accept_reject_order(order_id):
 
     try:
         # 根据订单号查询订单，并且要求订单处于等待接单状态
-        order = Order.query.filter(Order.id == order_id, Order.status == "WAIT_ACCEPT").first()
+        order = GeekHouseOrder.query.filter(GeekHouseOrder.id == order_id, GeekHouseOrder.status == "WAIT_ACCEPT").first()
         house = order.house
     except Exception as e:
         current_app.logger.error(e)
@@ -189,8 +189,8 @@ def save_order_comment(order_id):
 
     try:
         # 需要确保只能评论自己下的订单，而且订单处于待评价状态才可以
-        order = Order.query.filter(Order.id == order_id, Order.user_id == user_id,
-                                   Order.status == "WAIT_COMMENT").first()
+        order = GeekHouseOrder.query.filter(GeekHouseOrder.id == order_id, GeekHouseOrder.user_id == user_id,
+                                            GeekHouseOrder.status == "WAIT_COMMENT").first()
         house = order.house
     except Exception as e:
         current_app.logger.error(e)

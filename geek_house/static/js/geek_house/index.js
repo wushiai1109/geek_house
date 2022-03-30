@@ -50,8 +50,6 @@ function goToSearchPage(th) {
     var province = $(".province")[0].value;
     var city = $(".city")[0].value;
     var district = $(".district")[0].value;
-    // console.log([province, city, district].join('-'));
-    // if (undefined == areaName) areaName = "";
     var aname = [province, city, district].join('-');
 
     url += ("aname=" + aname);
