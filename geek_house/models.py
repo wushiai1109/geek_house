@@ -47,7 +47,7 @@ class User(BaseModel, db.Model):
     @password.setter
     def password(self, value):
         """
-        设置属性  user.passord = "xxxxx"
+        设置属性  user.password = "xxxxx"
         :param value: 设置属性时的数据 value就是"xxxxx", 原始的明文密码
         :return:
         """
@@ -82,25 +82,6 @@ class User(BaseModel, db.Model):
         return auth_dict
 
 
-class Area(BaseModel, db.Model):
-    """城区"""
-
-    __tablename__ = "ih_area_info"
-
-    id = db.Column(db.Integer, primary_key=True)  # 区域编号
-    name = db.Column(db.String(32), nullable=False)  # 区域名字
-    houses = db.relationship("House", backref="area")  # 区域的房屋
-
-    def to_dict(self):
-        """将对象转换为字典"""
-        d = {
-            "aid": self.id,
-            "aname": self.name
-        }
-        return d
-
-
-# 房屋设施表，建立房屋与设施的多对多关系
 house_facility = db.Table(
     "ih_house_facility",
     db.Column("house_id", db.Integer, db.ForeignKey("ih_house_info.id"), primary_key=True),  # 房屋编号
@@ -115,14 +96,13 @@ class House(BaseModel, db.Model):
 
     id = db.Column(db.Integer, primary_key=True)  # 房屋编号
     user_id = db.Column(db.Integer, db.ForeignKey("ih_user_profile.id"), nullable=False)  # 房屋主人的用户编号
-    area_id = db.Column(db.Integer, db.ForeignKey("ih_area_info.id"), nullable=False)  # 归属地的区域编号
     title = db.Column(db.String(64), nullable=False)  # 标题
     price = db.Column(db.Integer, default=0)  # 单价，单位：分
     address = db.Column(db.String(512), default="")  # 地址
     room_count = db.Column(db.Integer, default=1)  # 房间数目
     acreage = db.Column(db.Integer, default=0)  # 房屋面积
     unit = db.Column(db.String(32), default="")  # 房屋单元， 如几室几厅
-    capacity = db.Column(db.Integer, default=1)  # 房屋容纳的人数
+    capacity = db.Column(db.Integer, default=1)  # 房屋最多居住人数
     beds = db.Column(db.String(64), default="")  # 房屋床铺的配置
     deposit = db.Column(db.Integer, default=0)  # 房屋押金
     min_days = db.Column(db.Integer, default=1)  # 最少入住天数
@@ -139,7 +119,7 @@ class House(BaseModel, db.Model):
             "house_id": self.id,
             "title": self.title,
             "price": self.price,
-            "area_name": self.area.name,
+            # "area_name": self.area.name,
             "img_url": constants.QINIU_URL_DOMAIN + self.index_image_url if self.index_image_url else "",
             "room_count": self.room_count,
             "order_count": self.order_count,

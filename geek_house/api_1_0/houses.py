@@ -4,7 +4,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from . import api
 from flask import g, current_app, jsonify, request, session
 from geek_house.utils.response_code import RET
-from geek_house.models import Area, House, Facility, HouseImage, User, Order
+from geek_house.models import House, Facility, HouseImage, User, Order
 from geek_house import db, constants, redis_store
 from geek_house.utils.commons import login_required
 from geek_house.utils.image_storage import storage
@@ -12,43 +12,43 @@ from datetime import datetime
 import json
 
 
-@api.route("/areas")
-def get_area_info():
-    """获取城区信息"""
-    # 尝试从redis中读取数据
-    try:
-        resp_json = redis_store.get("area_info").decode()
-    except Exception as e:
-        current_app.logger.error(e)
-    else:
-        if resp_json is not None:
-            # redis有缓存数据
-            current_app.logger.info("hit redis area_info")
-            return resp_json, 200, {"Content-Type": "application/json"}
-
-    # 查询数据库，读取城区信息
-    try:
-        area_li = Area.query.all()
-    except Exception as e:
-        current_app.logger.error(e)
-        return jsonify(code=RET.DBERR, msg="数据库异常")
-
-    area_dict_li = []
-    # 将对象转换为字典
-    for area in area_li:
-        area_dict_li.append(area.to_dict())
-
-    # 将数据转换为json字符串
-    resp_dict = dict(code=RET.OK, msg="OK", data=area_dict_li)
-    resp_json = json.dumps(resp_dict)
-
-    # 将数据保存到redis中
-    try:
-        redis_store.setex("area_info", constants.AREA_INFO_REDIS_CACHE_EXPIRES, resp_json)
-    except Exception as e:
-        current_app.logger.error(e)
-
-    return resp_json, 200, {"Content-Type": "application/json"}
+# @api.route("/areas")
+# def get_area_info():
+#     """获取城区信息"""
+#     # 尝试从redis中读取数据
+#     try:
+#         resp_json = redis_store.get("area_info").decode()
+#     except Exception as e:
+#         current_app.logger.error(e)
+#     else:
+#         if resp_json is not None:
+#             # redis有缓存数据
+#             current_app.logger.info("hit redis area_info")
+#             return resp_json, 200, {"Content-Type": "application/json"}
+#
+#     # 查询数据库，读取城区信息
+#     try:
+#         area_li = Area.query.all()
+#     except Exception as e:
+#         current_app.logger.error(e)
+#         return jsonify(code=RET.DBERR, msg="数据库异常")
+#
+#     area_dict_li = []
+#     # 将对象转换为字典
+#     for area in area_li:
+#         area_dict_li.append(area.to_dict())
+#
+#     # 将数据转换为json字符串
+#     resp_dict = dict(code=RET.OK, msg="OK", data=area_dict_li)
+#     resp_json = json.dumps(resp_dict)
+#
+#     # 将数据保存到redis中
+#     try:
+#         redis_store.setex("area_info", constants.AREA_INFO_REDIS_CACHE_EXPIRES, resp_json)
+#     except Exception as e:
+#         current_app.logger.error(e)
+#
+#     return resp_json, 200, {"Content-Type": "application/json"}
 
 
 @api.route("/houses/info", methods=["POST"])
@@ -59,7 +59,7 @@ def save_house_info():
     {
         "title":"",
         "price":"",
-        "area_id":"1",
+        "aname":"",
         "address":"",
         "room_count":"",
         "acreage":"",
@@ -78,7 +78,7 @@ def save_house_info():
 
     title = house_data.get("title")  # 房屋名称标题
     price = house_data.get("price")  # 房屋单价
-    area_id = house_data.get("area_id")  # 房屋所属城区的编号
+    aname = house_data.get("aname")  # 房屋所属城区的编号
     address = house_data.get("address")  # 房屋地址
     room_count = house_data.get("room_count")  # 房屋包含的房间数目
     acreage = house_data.get("acreage")  # 房屋面积
@@ -89,10 +89,16 @@ def save_house_info():
     min_days = house_data.get("min_days")  # 最小入住天数
     max_days = house_data.get("max_days")  # 最大入住天数
 
+    aname_list = aname.split("-")
+    if not aname_list[2]:
+        return jsonify(code=RET.PARAMERR, msg="三级地址未选择完成")
+
     # 校验参数
     if not all(
-            [title, price, area_id, address, room_count, acreage, unit, capacity, beds, deposit, min_days, max_days]):
+            [title, price, aname, address, room_count, acreage, unit, capacity, beds, deposit, min_days, max_days]):
         return jsonify(code=RET.PARAMERR, msg="参数不完整")
+
+    address = aname.replace("-", "") + address
 
     # 判断金额是否正确
     try:
@@ -103,19 +109,19 @@ def save_house_info():
         return jsonify(code=RET.PARAMERR, msg="参数错误")
 
     # 判断城区id是否存在
-    try:
-        area = Area.query.get(area_id)
-    except Exception as e:
-        current_app.logger.error(e)
-        return jsonify(code=RET.DBERR, msg="数据库异常")
+    # try:
+    #     area = Area.query.get(area_id)
+    # except Exception as e:
+    #     current_app.logger.error(e)
+    #     return jsonify(code=RET.DBERR, msg="数据库异常")
 
-    if area is None:
-        return jsonify(code=RET.NODATA, msg="城区信息有误")
+    # if area is None:
+    #     return jsonify(code=RET.NODATA, msg="城区信息有误")
 
     # 保存房屋信息
     house = House(
         user_id=user_id,
-        area_id=area_id,
+        # area_id=area_id,
         title=title,
         price=price,
         address=address,
@@ -202,7 +208,7 @@ def save_house_image():
         db.session.add(house_image)
 
         # 处理房屋的主图片
-        if not house.index_image_url or house.index_image_url=="no_picture":
+        if not house.index_image_url or house.index_image_url == "no_picture":
             house.index_image_url = file_name
             db.session.add(house)
 
@@ -246,7 +252,7 @@ def get_house_index():
     """获取主页幻灯片展示的房屋基本信息"""
     # 从缓存中尝试获取数据
     try:
-        ret = redis_store.get("home_page_data").decode()
+        ret = redis_store.get("house_index_data").decode()
     except Exception as e:
         current_app.logger.error(e)
         ret = None
@@ -276,7 +282,7 @@ def get_house_index():
         # 将数据转换为json，并保存到redis缓存
         json_houses = json.dumps(houses_list)  # "[{},{},{}]"
         try:
-            redis_store.setex("home_page_data", constants.HOME_PAGE_DATA_REDIS_EXPIRES, json_houses)
+            redis_store.setex("house_index_data", constants.HOME_PAGE_DATA_REDIS_EXPIRES, json_houses)
         except Exception as e:
             current_app.logger.error(e)
 
@@ -340,8 +346,8 @@ def get_house_detail(house_id):
 def get_house_list():
     """获取房屋的列表信息（搜索页面）"""
     start_date = request.args.get("sd", "")  # 用户想要的起始时间
+    aname = request.args.get("aname", "")  # 用户想要的起始时间
     end_date = request.args.get("ed", "")  # 用户想要的结束时间
-    area_id = request.args.get("aid", "")  # 区域编号
     sort_key = request.args.get("sk", "new")  # 排序关键字
     page = request.args.get("p")  # 页数
 
@@ -360,12 +366,12 @@ def get_house_list():
         return jsonify(code=RET.PARAMERR, msg="日期参数有误")
 
     # 判断区域id
-    if area_id:
-        try:
-            area = Area.query.get(area_id)
-        except Exception as e:
-            current_app.logger.error(e)
-            return jsonify(code=RET.PARAMERR, msg="区域参数有误")
+    # if area_id:
+    #     try:
+    #         area = Area.query.get(area_id)
+    #     except Exception as e:
+    #         current_app.logger.error(e)
+    #         return jsonify(code=RET.PARAMERR, msg="区域参数有误")
 
     # 处理页数
     try:
@@ -374,8 +380,13 @@ def get_house_list():
         current_app.logger.error(e)
         page = 1
 
+    aname_str = aname.replace("-", "", 2)
+    aname_list = aname_str.split("-")
+    aname = aname_list[0]
+    detail_aname = aname_list[1] if len(aname_list) > 1 else ""
+
     # 获取缓存数据
-    redis_key = "house_%s_%s_%s_%s" % (start_date, end_date, area_id, sort_key)
+    redis_key = "house_%s_%s_%s_%s" % (start_date, end_date, aname, sort_key)
     try:
         resp_json = redis_store.hget(redis_key, page)
     except Exception as e:
@@ -412,8 +423,10 @@ def get_house_list():
             filter_params.append(House.id.notin_(conflict_house_ids))
 
     # 区域条件
-    if area_id:
-        filter_params.append(House.area_id == area_id)
+    # if area_id:
+    #     filter_params.append(House.area_id == area_id)
+
+    filter_params.append(House.address.like("%" + aname + "%" + detail_aname + "%"))
 
     # 查询数据库
     # 补充排序条件
@@ -448,7 +461,7 @@ def get_house_list():
 
     if page <= total_page:
         # 设置缓存数据
-        redis_key = "house_%s_%s_%s_%s" % (start_date, end_date, area_id, sort_key)
+        redis_key = "house_%s_%s_%s_%s" % (start_date, end_date, aname, sort_key)
         # 哈希类型
         try:
             # redis_store.hset(redis_key, page, resp_json)

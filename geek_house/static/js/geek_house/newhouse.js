@@ -5,26 +5,31 @@ function getCookie(name) {
 
 $(document).ready(function () {
     // 向后端获取城区信息
-    $.get("/api/v1.0/areas", function (resp) {
-        if (resp.code == "0") {
-            var areas = resp.data;
-            // for (i=0; i<areas.length; i++) {
-            //     var area = areas[i];
-            //     $("#area-id").append('<option value="'+ area.aid +'">'+ area.aname +'</option>');
-            // }
-
-            // 使用js模板
-            var html = template("areas-tmpl", {areas: areas})
-            $("#area-id").html(html);
-
-        } else {
-            alert(resp.msg);
-        }
-
-    }, "json");
+    // $.get("/api/v1.0/areas", function (resp) {
+    //     if (resp.code == "0") {
+    //         var areas = resp.data;
+    //         // for (i=0; i<areas.length; i++) {
+    //         //     var area = areas[i];
+    //         //     $("#area-id").append('<option value="'+ area.aid +'">'+ area.aname +'</option>');
+    //         // }
+    //
+    //         // 使用js模板
+    //         var html = template("areas-tmpl", {areas: areas})
+    //         $("#area-id").html(html);
+    //
+    //     } else {
+    //         alert(resp.msg);
+    //     }
+    //
+    // }, "json");
 
     $("#form-house-info").submit(function (e) {
         e.preventDefault();
+
+        var province = $(".province")[0].value;
+        var city = $(".city")[0].value;
+        var district = $(".district")[0].value;
+        var aname = [province, city, district].join('-');
 
         // 处理表单数据
         var data = {};
@@ -37,7 +42,7 @@ $(document).ready(function () {
         $(":checked[name=facility]").each(function (index, x) {
             facility[index] = $(x).val()
         });
-
+        data.aname = aname;
         data.facility = facility;
 
         // 向后端发送请求

@@ -2,9 +2,9 @@ migrations创建方式：
 flask_migrate,flask_script：https://segmentfault.com/a/1190000016867951
 
 
-python manage.py db init-->多了migrations文件
-python manage.py db migrate -m "init tables"
-python manage.py db upgrade
+python3 bootstrap.py db init-->多了migrations文件
+python3 bootstrap.py db migrate -m "init tables"
+python3 bootstrap.py db upgrade
 
 可能报错：No changes in schema detected.
 原因：没有文件使用model，只有model自身知晓

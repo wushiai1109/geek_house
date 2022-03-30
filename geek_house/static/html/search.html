@@ -17,10 +17,9 @@
     <div class="top-bar">
         <div class="nav-bar">
             <a class="nav-btn fl" href="/"><span><i class="fa fa-angle-left fa-2x"></i></span></a>
-            <form action="api/v1.0/houses1" method="get">
-                <input type="search" name="search" placeholder="详细地址查询" style="width:200px; height:30px;"/>
-                <input type="submit" style="width:50px; height:30px;"/>
-            </form>
+            <input type="search" id="detail_position" name="search" placeholder="详细地址查询"
+                   style="width:200px; height:30px;"/>
+            <button id='search-button'>搜索</button>
         </div>
         <ul class="filter-title-bar">
             <li class="filter-title">
@@ -47,6 +46,12 @@
                 </div>
             </div>
             <ul class="filter-item filter-area">
+                <div data-toggle="distpicker" class="search-bar">
+                    <select class="filter-btn province" id="" data-province="-- 选择省 --"></select>
+                    <select class="filter-btn city" id="" data-city="-- 选择市 --"></select>
+                    <select class="filter-btn district" id="" data-district="-- 选择区(县) --"></select>
+                    <button id='pick-area'>筛选</button>
+                </div>
             </ul>
             <ul class="filter-item filter-sort">
                 <li class="active" sort-key="new">最新上线</li>
@@ -78,8 +83,8 @@
         <p><span><i class="fa fa-copyright"></i></span>GEEK租房</p>
     </div>
 </div>
-
 <script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/distpicker.js"></script>
 <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
 <script src="/static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 <script src="/static/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>

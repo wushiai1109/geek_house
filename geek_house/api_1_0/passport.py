@@ -132,10 +132,10 @@ def login():
         return jsonify(code=RET.PARAMERR, msg="手机号格式错误")
 
     # 判断错误次数是否超过限制，如果超过限制，则返回
-    # redis记录： "access_nums_请求的ip": "次数"
+    # redis记录： "access_ip_请求的ip": "次数"
     user_ip = request.remote_addr  # 用户的ip地址
     try:
-        access_nums = redis_store.get("access_num_%s" % user_ip).decode()
+        access_nums = redis_store.get("access_ip_%s" % user_ip).decode()
     except Exception as e:
         current_app.logger.error(e)
     else:
@@ -154,12 +154,12 @@ def login():
         # 如果验证失败，记录错误次数，返回信息
         try:
             # redis的incr可以对字符串类型的数字数据进行加一操作，如果数据一开始不存在，则会初始化为1
-            redis_store.incr("access_num_%s" % user_ip)
-            redis_store.expire("access_num_%s" % user_ip, constants.LOGIN_ERROR_FORBID_TIME)
+            redis_store.incr("access_ip_%s" % user_ip)
+            redis_store.expire("access_ip_%s" % user_ip, constants.LOGIN_ERROR_FORBID_TIME)
         except Exception as e:
             current_app.logger.error(e)
 
-        return jsonify(code=RET.DATAERR, msg="用户名或密码错误")
+        return jsonify(code=RET.DATAERR, msg="手机号或密码错误")
 
     # 如果验证相同成功，保存登录状态， 在session中
     session["name"] = user.name

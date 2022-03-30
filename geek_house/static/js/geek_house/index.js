@@ -47,9 +47,14 @@ function goToSearchPage(th) {
     var url = "/search.html?";
     url += ("aid=" + $(th).attr("area-id"));
     url += "&";
-    var areaName = $(th).attr("area-name");
-    if (undefined == areaName) areaName = "";
-    url += ("aname=" + areaName);
+    var province = $(".province")[0].value;
+    var city = $(".city")[0].value;
+    var district = $(".district")[0].value;
+    // console.log([province, city, district].join('-'));
+    // if (undefined == areaName) areaName = "";
+    var aname = [province, city, district].join('-');
+
+    url += ("aname=" + aname);
     url += "&";
     url += ("sd=" + $(th).attr("start-date"));
     url += "&";
@@ -85,18 +90,18 @@ $(document).ready(function () {
     });
 
     // 获取城区信息
-    $.get("/api/v1.0/areas", function (resp) {
-        if ("0" == resp.code) {
-            $(".area-list").html(template("area-list-tmpl", {areas: resp.data}));
-
-            $(".area-list a").click(function (e) {
-                $("#area-btn").html($(this).html());
-                $(".search-btn").attr("area-id", $(this).attr("area-id"));
-                $(".search-btn").attr("area-name", $(this).html());
-                $("#area-modal").modal("hide");
-            });
-        }
-    });
+    // $.get("/api/v1.0/areas", function (resp) {
+    //     if ("0" == resp.code) {
+    //         $(".area-list").html(template("area-list-tmpl", {areas: resp.data}));
+    //
+    //         $(".area-list a").click(function (e) {
+    //             $("#area-btn").html($(this).html());
+    //             $(".search-btn").attr("area-id", $(this).attr("area-id"));
+    //             $(".search-btn").attr("area-name", $(this).html());
+    //             $("#area-modal").modal("hide");
+    //         });
+    //     }
+    // });
     $('.modal').on('show.bs.modal', centerModals);      //当模态框出现的时候
     $(window).on('resize', centerModals);               //当窗口大小变化的时候
     $("#start-date").datepicker({
