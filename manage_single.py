@@ -18,11 +18,11 @@ class Config(object):
     SECRET_KEY = "XHSOI*Y9dfs9cshd9"
 
     # 数据库
-    SQLALCHEMY_DATABASE_URI = "mysql://root:@WSAwsa18723746541@localhost:3306/geek_house"
+    SQLALCHEMY_DATABASE_URI = "mysql://root:@WSAwsa18723746541@49.235.15.188:3306/geek_house"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # redis
-    REDIS_HOST = "localhost"
+    REDIS_HOST = "49.235.15.188"
     REDIS_PORT = 6379
 
     # flask-session配置

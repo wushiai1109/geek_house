@@ -6,7 +6,7 @@ from celery import Celery
 from geek_house.libs.CCP import CCP
 
 # 定义celery对象
-celery_app = Celery("geek_house", broker="redis://localhost:6379/1")
+celery_app = Celery("geek_house", broker="redis://49.235.15.188:6379/1")
 
 
 # 然后后面要去指明 Redis 的这样的数据库了，如果不去指明的话，那默认使用的是 Redis 里面的 0 号库，

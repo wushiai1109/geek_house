@@ -11,6 +11,7 @@ python3 bootstrap.py db upgrade
 
 
 启动项目：python manage.py runserver
+python3 bootstrap.py runserver --host=0.0.0.0 --port=8080
 
 # celery开启的命令
 # celery -A geek_house.tasks.task_sms worker -l info
