@@ -3,11 +3,10 @@
 from . import api
 from flask import request, jsonify, current_app, session
 from geek_house.utils.response_code import RET
-from geek_house.utils.image_storage import storage
-from geek_house import redis_store, db, constants
-from geek_house.models import GeekHouseUser
+from geek_house import redis_store, db
+from ..conf import constants
+from geek_house.models.models import GeekHouseUser
 from sqlalchemy.exc import IntegrityError  # 重复键
-from werkzeug.security import generate_password_hash, check_password_hash
 import re
 
 

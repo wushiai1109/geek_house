@@ -2,11 +2,12 @@
 
 from . import api
 from geek_house.utils.commons import login_required
-from geek_house.models import GeekHouseOrder
+from geek_house.models.models import GeekHouseOrder
 from flask import g, current_app, jsonify, request
 from geek_house.utils.response_code import RET
 from alipay import AliPay
-from geek_house import constants, db
+from geek_house import db
+from ..conf import constants
 import os
 
 

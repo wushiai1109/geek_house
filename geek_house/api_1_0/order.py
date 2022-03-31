@@ -6,7 +6,7 @@ from flask import request, g, jsonify, current_app
 from geek_house import db, redis_store
 from geek_house.utils.commons import login_required
 from geek_house.utils.response_code import RET
-from geek_house.models import GeekHouseInfo, GeekHouseOrder
+from geek_house.models.models import GeekHouseInfo, GeekHouseOrder
 from . import api
 
 
@@ -107,10 +107,12 @@ def get_user_orders():
             houses = GeekHouseInfo.query.filter(GeekHouseInfo.user_id == user_id).all()
             houses_ids = [house.id for house in houses]
             # 再查询预订了自己房子的订单
-            orders = GeekHouseOrder.query.filter(GeekHouseOrder.house_id.in_(houses_ids)).order_by(GeekHouseOrder.create_time.desc()).all()
+            orders = GeekHouseOrder.query.filter(GeekHouseOrder.house_id.in_(houses_ids)).order_by(
+                GeekHouseOrder.create_time.desc()).all()
         else:
             # 以房客的身份查询订单， 查询自己预订的订单
-            orders = GeekHouseOrder.query.filter(GeekHouseOrder.user_id == user_id).order_by(GeekHouseOrder.create_time.desc()).all()
+            orders = GeekHouseOrder.query.filter(GeekHouseOrder.user_id == user_id).order_by(
+                GeekHouseOrder.create_time.desc()).all()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="查询订单信息失败")
@@ -142,7 +144,8 @@ def accept_reject_order(order_id):
 
     try:
         # 根据订单号查询订单，并且要求订单处于等待接单状态
-        order = GeekHouseOrder.query.filter(GeekHouseOrder.id == order_id, GeekHouseOrder.status == "WAIT_ACCEPT").first()
+        order = GeekHouseOrder.query.filter(GeekHouseOrder.id == order_id,
+                                            GeekHouseOrder.status == "WAIT_ACCEPT").first()
         house = order.house
     except Exception as e:
         current_app.logger.error(e)

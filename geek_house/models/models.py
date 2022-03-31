@@ -4,8 +4,8 @@ from datetime import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from geek_house import constants
-from . import db
+from geek_house.conf import constants
+from geek_house import db
 
 
 class BaseModel(object):
@@ -255,6 +255,7 @@ class GeekHouseOrder(BaseModel, db.Model):
             "days": self.days,
             "amount": self.amount,
             "status": self.status,
-            "comment": self.comment if self.comment else ""
+            "comment": self.comment if self.comment else "",
+            "house_id": self.house_id
         }
         return order_dict

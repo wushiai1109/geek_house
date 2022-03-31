@@ -1,12 +1,12 @@
 # coding:utf-8
 from . import api
 from geek_house.utils.captcha.captcha import captcha
-from geek_house import redis_store, constants, db
+from geek_house import redis_store
+from ..conf import constants
 from flask import current_app, jsonify, make_response, request
 from geek_house.utils.response_code import RET
-from geek_house.models import GeekHouseUser
+from geek_house.models.models import GeekHouseUser
 import random
-from geek_house.libs.CCP import CCP
 from geek_house.tasks.task_sms import send_sms
 
 

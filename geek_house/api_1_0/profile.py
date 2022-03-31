@@ -5,8 +5,9 @@ from geek_house.utils.commons import login_required
 from flask import g, current_app, jsonify, request, session
 from geek_house.utils.response_code import RET
 from geek_house.utils.image_storage import storage
-from geek_house.models import GeekHouseUser
-from geek_house import db, constants
+from geek_house.models.models import GeekHouseUser
+from geek_house import db
+from ..conf import constants
 
 
 @api.route("/users/avatar", methods=["POST"])
