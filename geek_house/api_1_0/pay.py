@@ -46,7 +46,8 @@ def order_pay(order_id):
         out_trade_no=order.id,  # 订单编号
         total_amount=str(order.amount / 100.0),  # 总金额
         subject=u"GEEK租房 %s" % order.id,  # 订单标题
-        return_url="http://localhost/payComplete.html",  # 返回的连接地址
+        return_url="http://localhost:8080/payComplete.html",  # 返回的连接地址
+        # return_url="http://192.168.1.10:8080/payComplete.html",  # 返回的连接地址
         notify_url=None  # 可选, 不填则使用默认notify url
     )
 

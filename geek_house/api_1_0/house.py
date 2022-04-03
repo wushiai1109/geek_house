@@ -225,8 +225,11 @@ def get_house_index():
     else:
         try:
             # 查询数据库，返回房屋订单数目最多的5条数据
-            houses = GeekHouseInfo.query.order_by(GeekHouseInfo.order_count.desc()).limit(
+            houses = GeekHouseInfo.query.order_by(GeekHouseInfo.order_count.desc(),
+                                                  GeekHouseInfo.id).limit(
                 constants.HOME_PAGE_MAX_HOUSES)
+            # houses = GeekHouseInfo.query.order_by(GeekHouseInfo.create_time.desc()).limit(
+            #     constants.HOME_PAGE_MAX_HOUSES)
         except Exception as e:
             current_app.logger.error(e)
             return jsonify(code=RET.DBERR, msg="查询数据失败")
