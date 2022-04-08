@@ -1,13 +1,14 @@
 # coding:utf-8
 
-from . import api
+from geek_house.api_1_0 import api
 from geek_house.utils.commons import login_required
 from flask import g, current_app, jsonify, request, session
 from geek_house.utils.response_code import RET
 from geek_house.utils.image_storage import storage
+from geek_house.utils.name_auth import name_auth
 from geek_house.models.models import GeekHouseUser
 from geek_house import db
-from ..conf import constants
+from geek_house.conf import constants
 
 
 @api.route("/users/avatar", methods=["POST"])
@@ -27,14 +28,14 @@ def set_user_avatar():
 
     image_data = image_file.read()
 
-    # 调用七牛上传图片, 返回文件名
+    # 调用七牛云接口上传图片, 接口返回文件名称
     try:
         file_name = storage(image_data)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.THIRDERR, msg="上传图片失败")
 
-    # 保存文件名到数据库中
+    # 将文件名保存到数据库中
     try:
         GeekHouseUser.query.filter_by(id=user_id).update({"avatar_url": file_name})
         db.session.commit()
@@ -133,10 +134,12 @@ def set_user_auth():
     if not all([real_name, id_card]):
         return jsonify(code=RET.PARAMERR, msg="参数错误")
 
+    # if name_auth(real_name, id_card) != 0:
+    #     return jsonify(code=RET.AUTHERR, msg="认证失败，请检查您的输入信息")
+
     # 保存用户的姓名与身份证号
     try:
-        GeekHouseUser.query.filter_by(id=user_id, real_name=None, id_card=None).update(
-            {"real_name": real_name, "id_card": id_card})
+        GeekHouseUser.query.filter_by(id=user_id).update(dict(real_name=real_name, id_card=id_card))
         db.session.commit()
     except Exception as e:
         current_app.logger.error(e)

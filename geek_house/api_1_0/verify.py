@@ -1,8 +1,8 @@
 # coding:utf-8
-from . import api
+from geek_house.api_1_0 import api
 from geek_house.utils.captcha.captcha import captcha
 from geek_house import redis_store
-from ..conf import constants
+from geek_house.conf import constants
 from flask import current_app, jsonify, make_response, request
 from geek_house.utils.response_code import RET
 from geek_house.models.models import GeekHouseUser
@@ -18,8 +18,7 @@ def get_image_code(image_code_id):
     : params image_code_id:  图片验证码编号
     :return:  正常:验证码图片  异常：返回json
     """
-    # 业务逻辑处理
-    # 生成验证码图片
+    # 业务逻辑处理，生成验证码图片
     # 名字，真实文本， 图片数据
     name, text, image_data = captcha.generate_captcha()
 
@@ -41,7 +40,6 @@ def get_image_code(image_code_id):
     except Exception as e:
         # 记录日志
         current_app.logger.error(e)
-        # return jsonify(code=RET.DBERR,  msg="save image code id failed")
         return jsonify(code=RET.DBERR, msg="保存图片验证码失败")
 
     # 返回图片

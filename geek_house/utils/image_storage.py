@@ -36,4 +36,4 @@ def storage(file_data):
 if __name__ == '__main__':
     with open("./1.png", "rb") as f:
         file_data = f.read()
-        storage(file_data)
+        print(storage(file_data))

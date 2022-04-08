@@ -8,6 +8,7 @@ accToken = '8041e928499d47fe8008c58861b4ad21'
 # appId = '容联云通讯分配的应用ID'
 appId = '8aaf0708780055cd0178ac5c71d93ff9'
 
+
 # demo
 def send_message1():
     sdk = SmsSDK(accId, accToken, appId)
@@ -19,6 +20,7 @@ def send_message1():
     datas = ('9989', '5')
     resp = sdk.sendMessage(tid, mobile, datas)
     print(resp)
+
 
 # send_message()
 
@@ -40,8 +42,8 @@ class CCP(object):
     def send_message(self, tid, mobile, datas):
         result = self.sdk.sendMessage(tid, mobile, datas)
         status_code = json.loads(result).get("statusCode")
-        if status_code == "000000" or status_code == "112310": # 测试可用
-        # if status_code == "000000":
+        # if status_code == "000000" or status_code == "112310": # 测试可用
+        if status_code == "000000":
             # 表示发送短信成功
             return 0
         else:

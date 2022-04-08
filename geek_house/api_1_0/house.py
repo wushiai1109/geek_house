@@ -70,16 +70,6 @@ def save_house_info():
         current_app.logger.error(e)
         return jsonify(code=RET.PARAMERR, msg="参数错误")
 
-    # 判断城区id是否存在
-    # try:
-    #     area = Area.query.get(area_id)
-    # except Exception as e:
-    #     current_app.logger.error(e)
-    #     return jsonify(code=RET.DBERR, msg="数据库异常")
-
-    # if area is None:
-    #     return jsonify(code=RET.NODATA, msg="城区信息有误")
-
     # 保存房屋信息
     house = GeekHouseInfo(
         user_id=user_id,
@@ -129,7 +119,8 @@ def save_house_info():
 @api.route("/houses/image", methods=["POST"])
 @login_required
 def save_house_image():
-    """保存房屋的图片
+    """
+    保存房屋的图片
     参数 图片 房屋的id
     """
 
@@ -193,9 +184,8 @@ def get_user_houses():
     user_id = g.user_id
 
     try:
-        # House.query.filter_by(user_id=user_id)
-        user = GeekHouseUser.query.get(user_id)
-        houses = user.houses
+        houses = GeekHouseInfo.query.filter(GeekHouseInfo.user_id == user_id).order_by(
+            GeekHouseInfo.create_time.desc()).all()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="获取数据失败")
@@ -330,14 +320,6 @@ def get_house_list():
         current_app.logger.error(e)
         return jsonify(code=RET.PARAMERR, msg="日期参数有误")
 
-    # 判断区域id
-    # if area_id:
-    #     try:
-    #         area = Area.query.get(area_id)
-    #     except Exception as e:
-    #         current_app.logger.error(e)
-    #         return jsonify(code=RET.PARAMERR, msg="区域参数有误")
-
     # 处理页数
     try:
         page = int(page)
@@ -345,13 +327,14 @@ def get_house_list():
         current_app.logger.error(e)
         page = 1
 
+    # 获取缓存数据
+    redis_key = "house_%s_%s_%s_%s" % (start_date, end_date, aname, sort_key)
+
     aname_str = aname.replace("-", "", 2)
     aname_list = aname_str.split("-")
     aname = aname_list[0]
     detail_aname = aname_list[1] if len(aname_list) > 1 else ""
 
-    # 获取缓存数据
-    redis_key = "house_%s_%s_%s_%s" % (start_date, end_date, aname, sort_key)
     try:
         resp_json = redis_store.hget(redis_key, page)
     except Exception as e:
@@ -387,10 +370,6 @@ def get_house_list():
         # 如果冲突的房屋id不为空，向查询参数中添加条件
         if conflict_house_ids:
             filter_params.append(GeekHouseInfo.id.notin_(conflict_house_ids))
-
-    # 区域条件
-    # if area_id:
-    #     filter_params.append(House.area_id == area_id)
 
     filter_params.append(GeekHouseInfo.address.like("%" + aname + "%" + detail_aname + "%"))
 
@@ -448,16 +427,3 @@ def get_house_list():
             current_app.logger.error(e)
 
     return resp_json, 200, {"Content-Type": "application/json"}
-
-# redis_store
-#
-# "house_起始_结束_区域id_排序_页数"
-# (code=RET.OK, msg="OK", data={"total_page": total_page, "houses": houses, "current_page": page})
-#
-#
-#
-# "house_起始_结束_区域id_排序": hash
-# {
-#     "1": "{}",
-#     "2": "{}",
-# }

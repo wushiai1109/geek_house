@@ -35,11 +35,3 @@ def login_required(view_func):
             return jsonify(code=RET.SESSIONERR, msg="用户未登录")
 
     return wrapper
-
-# @login_required
-# def set_user_avatar():
-#     # user_id = session.get("user_id")
-#     user_id = g.user_id
-#     return json  ""
-#
-# set_user_avatar()  -> wrapper()

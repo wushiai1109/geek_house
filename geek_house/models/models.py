@@ -34,9 +34,12 @@ class GeekHouseUser(BaseModel, db.Model):
     houses = db.relationship("GeekHouseInfo", backref="user")  # 用户发布的房屋
     orders = db.relationship("GeekHouseOrder", backref="user")  # 用户下的订单
 
-    # def generate_password_hash(self, origin_password):
-    #     """对密码进行加密"""
-    #     self.password_hash = generate_password_hash(origin_password)
+    # 为什么需要定义Relationships
+    # https://segmentfault.com/a/1190000018006031
+
+    def generate_password_hash_demo(self, origin_password):
+        """对密码进行加密"""
+        print(generate_password_hash(origin_password))
 
     # 加上property装饰器后，会把函数变为属性，属性名即为函数名
     @property
