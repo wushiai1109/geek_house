@@ -3,7 +3,7 @@
 from geek_house.api_1_0 import api
 # 聊一聊 Flask 的 jsonify: https://www.jianshu.com/p/a25357f2d930
 from flask import request, jsonify, current_app, session
-from geek_house.utils.response_code import RET
+from geek_house.conf.response_code import RET
 from geek_house import redis_store, db
 from geek_house.conf import constants
 from geek_house.models.models import GeekHouseUser

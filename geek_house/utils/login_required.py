@@ -4,7 +4,7 @@ import functools
 from flask import session, jsonify, g
 from werkzeug.routing import BaseConverter
 
-from geek_house.utils.response_code import RET
+from geek_house.conf.response_code import RET
 
 
 # 定义正则转换器

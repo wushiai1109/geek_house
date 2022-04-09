@@ -74,6 +74,7 @@ def name_auth(name, idcard):
     except Exception as e:
         return -1
 
-# if __name__ == "__main__":
-#     res = name_auth("", "")
-#     print(res)
+
+if __name__ == "__main__":
+    res = name_auth("", "")
+    print(res)

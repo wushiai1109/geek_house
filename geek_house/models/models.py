@@ -7,6 +7,21 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from geek_house.conf import constants
 from geek_house import db
 
+# 做出一个专门的表，存储映射关系
+# 注意：1. 这个表中两个"id"都不是主键，因为是多对多的关系，所以二者都可以有多条数据。
+#  2. 映射表必须在前面定义，否则后面的类引用时，编译器会找不到
+house_facility = db.Table(
+    "geek_house_facility",
+    db.Column("house_id", db.Integer, db.ForeignKey("geek_house_info.id"), primary_key=True),  # 房屋编号
+    db.Column("facility_id", db.Integer, db.ForeignKey("geek_house_facility_info.id"), primary_key=True)  # 设施编号
+)
+# 注意映射表必须在前面定义，否则后面的类引用时，编译器会找不到
+house_favorite = db.Table(
+    "geek_house_favorite",
+    db.Column("user_id", db.Integer, db.ForeignKey("geek_house_user.id"), primary_key=True),  # 用户编号
+    db.Column("house_id", db.Integer, db.ForeignKey("geek_house_info.id"), primary_key=True)  # 房屋编号
+)
+
 
 class BaseModel(object):
     """
@@ -31,6 +46,7 @@ class GeekHouseUser(BaseModel, db.Model):
     real_name = db.Column(db.String(32))  # 真实姓名
     id_card = db.Column(db.String(20))  # 身份证号
     avatar_url = db.Column(db.String(128))  # 用户头像路径
+    favorites = db.relationship("GeekHouseInfo", secondary=house_favorite)  # 用户的收藏
     houses = db.relationship("GeekHouseInfo", backref="user")  # 用户发布的房屋
     orders = db.relationship("GeekHouseOrder", backref="user")  # 用户下的订单
 
@@ -88,14 +104,11 @@ class GeekHouseUser(BaseModel, db.Model):
             "real_name": self.real_name,
             "id_card": self.id_card
         }
+
+        favorites = []
+        for favorite in self.favorites:
+            favorites.append(facility.id)
         return auth_dict
-
-
-house_facility = db.Table(
-    "geek_house_facility",
-    db.Column("house_id", db.Integer, db.ForeignKey("geek_house_info.id"), primary_key=True),  # 房屋编号
-    db.Column("facility_id", db.Integer, db.ForeignKey("geek_house_facility_info.id"), primary_key=True)  # 设施编号
-)
 
 
 class GeekHouseInfo(BaseModel, db.Model):
@@ -166,6 +179,9 @@ class GeekHouseInfo(BaseModel, db.Model):
 
         # 房屋图片
         img_urls = []
+        # images = GeekHouseImage.query.filter(GeekHouseImage.house_id == self.id).all()
+        # for image in images:
+        #     img_urls.append(constants.QINIU_URL_DOMAIN + image.url)
         for image in self.images:
             img_urls.append(constants.QINIU_URL_DOMAIN + image.url)
         house_dict["img_urls"] = img_urls

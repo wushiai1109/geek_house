@@ -3,7 +3,7 @@
 from celery import Celery
 # 为什么使用CELERY而不使用线程发送耗时任务：https://blog.csdn.net/qq_42377379/article/details/84997915
 # 为什么要使用celery，以及broker的选择标准：https://blog.csdn.net/weixin_45572139/article/details/106469805?spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-3.pc_relevant_antiscan_v2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-3.pc_relevant_antiscan_v2&utm_relevant_index=6
-from geek_house.libs.CCP import CCP
+from geek_house.utils.send_message import CCP
 
 # 定义celery对象
 celery_app = Celery("geek_house", broker="redis://localhost:6379/1")
@@ -21,4 +21,4 @@ def send_sms(tid, mobile, datas):
     ccp.send_message(tid, mobile, datas)
 
 # celery开启的命令
-# celery -A geek_house.tasks.task_sms worker -l info
+# python3 -m celery -A geek_house.utils.celery_task worker -l info

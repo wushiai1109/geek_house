@@ -4,10 +4,10 @@ from geek_house.utils.captcha.captcha import captcha
 from geek_house import redis_store
 from geek_house.conf import constants
 from flask import current_app, jsonify, make_response, request
-from geek_house.utils.response_code import RET
+from geek_house.conf.response_code import RET
 from geek_house.models.models import GeekHouseUser
 import random
-from geek_house.tasks.task_sms import send_sms
+from geek_house.utils.celery_task import send_sms
 
 
 # GET /api/v1.0/image_codes/<image_code_id>

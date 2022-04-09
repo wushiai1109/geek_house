@@ -11,6 +11,7 @@ class RET:
     PARAMERR = "4103"
     USERERR = "4104"
     ROLEERR = "4105"
+    ADDRESS = "4106"
     PWDERR = "4106"
     REQERR = "4201"
     IPERR = "4202"
@@ -18,6 +19,7 @@ class RET:
     IOERR = "4302"
     SERVERERR = "4500"
     UNKOWNERR = "4501"
+    AUTHERR = "4502"
 
 
 error_map = {
@@ -31,6 +33,7 @@ error_map = {
     RET.PARAMERR: u"参数错误",
     RET.USERERR: u"用户不存在或未激活",
     RET.ROLEERR: u"用户身份错误",
+    RET.ADDRESS: u"三级地址未选择完成",
     RET.PWDERR: u"密码错误",
     RET.REQERR: u"非法请求或请求次数受限",
     RET.IPERR: u"IP受限",
@@ -38,4 +41,5 @@ error_map = {
     RET.IOERR: u"文件读写错误",
     RET.SERVERERR: u"内部错误",
     RET.UNKOWNERR: u"未知错误",
+    RET.AUTHERR: u"认证失败，请检查您的认证信息是否有误！",
 }

@@ -3,11 +3,11 @@ from werkzeug.datastructures import ImmutableMultiDict
 
 from geek_house.api_1_0 import api
 from flask import g, current_app, jsonify, request, session
-from geek_house.utils.response_code import RET
-from geek_house.models.models import GeekHouseInfo, GeekHouseFacilityInfo, GeekHouseImage, GeekHouseUser, GeekHouseOrder
+from geek_house.conf.response_code import RET
+from geek_house.models.models import GeekHouseInfo, GeekHouseFacilityInfo, GeekHouseImage, GeekHouseOrder
 from geek_house import db, redis_store
 from geek_house.conf import constants
-from geek_house.utils.commons import login_required
+from geek_house.utils.login_required import login_required
 from geek_house.utils.image_storage import storage
 from datetime import datetime
 import json
@@ -211,7 +211,7 @@ def get_house_index():
     if ret:
         current_app.logger.info("hit house index info redis")
         # 因为redis中保存的是json字符串，所以直接进行字符串拼接返回
-        return '{"code":0, "msg":"OK", "data":%s}' % ret, 200, {"Content-Type": "application/json"}
+        return jsonify(code=RET.OK, msg="OK", data=json.loads(ret))
     else:
         try:
             # 查询数据库，返回房屋订单数目最多的5条数据
@@ -241,7 +241,7 @@ def get_house_index():
         except Exception as e:
             current_app.logger.error(e)
 
-        return '{"code":0, "msg":"OK", "data":%s}' % json_houses, 200, {"Content-Type": "application/json"}
+        return jsonify(code=RET.OK, msg="OK", data=json.loads(json_houses))
 
 
 @api.route("/houses/<int:house_id>", methods=["GET"])
@@ -264,8 +264,7 @@ def get_house_detail(house_id):
         ret = None
     if ret:
         current_app.logger.info("hit house info redis")
-        return '{"code":"0", "msg":"OK", "data":{"user_id":%s, "house":%s}}' % (user_id, ret), \
-               200, {"Content-Type": "application/json"}
+        return jsonify(code=RET.OK, msg="OK", data={"user_id": user_id, "house": json.loads(ret)})
 
     # 查询数据库
     try:
@@ -291,9 +290,7 @@ def get_house_detail(house_id):
     except Exception as e:
         current_app.logger.error(e)
 
-    resp = '{"code":"0", "msg":"OK", "data":{"user_id":%s, "house":%s}}' % (user_id, json_house), \
-           200, {"Content-Type": "application/json"}
-    return resp
+    return jsonify(code=RET.OK, msg="OK", data={"user_id": user_id, "house": json.loads(json_house)})
 
 
 # GET /api/v1.0/houses?sd=2022-02-01&ed=2022-02-31&aid=10&sk=new&p=1
@@ -341,7 +338,7 @@ def get_house_list():
         current_app.logger.error(e)
     else:
         if resp_json:
-            return resp_json, 200, {"Content-Type": "application/json"}
+            return jsonify(json.loads(resp_json))
 
     # 过滤条件的参数列表容器
     filter_params = []
@@ -426,4 +423,4 @@ def get_house_list():
         except Exception as e:
             current_app.logger.error(e)
 
-    return resp_json, 200, {"Content-Type": "application/json"}
+    return jsonify(json.loads(resp_json))

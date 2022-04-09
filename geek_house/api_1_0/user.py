@@ -1,11 +1,10 @@
 # coding:utf-8
 
 from geek_house.api_1_0 import api
-from geek_house.utils.commons import login_required
+from geek_house.utils.login_required import login_required
 from flask import g, current_app, jsonify, request, session
-from geek_house.utils.response_code import RET
+from geek_house.conf.response_code import RET
 from geek_house.utils.image_storage import storage
-from geek_house.utils.name_auth import name_auth
 from geek_house.models.models import GeekHouseUser
 from geek_house import db
 from geek_house.conf import constants

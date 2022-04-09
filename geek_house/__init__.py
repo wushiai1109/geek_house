@@ -9,7 +9,7 @@ from flask_wtf import CSRFProtect
 import redis
 import logging
 from logging.handlers import RotatingFileHandler
-from geek_house.utils.commons import ReConverter
+from geek_house.utils.login_required import ReConverter
 
 import pymysql
 
