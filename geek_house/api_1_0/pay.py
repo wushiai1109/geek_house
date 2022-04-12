@@ -32,10 +32,11 @@ def order_pay(order_id):
     alipay_client = AliPay(
         appid="2021000118650926",
         app_notify_url=None,  # 默认回调url
-        app_private_key_string=open(os.path.abspath(os.path.dirname(__file__)) + "/keys/app_private_key.pem").read(),
+        app_private_key_string=open(
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..")) + "/conf/keys/app_private_key.pem").read(),
         # 私钥
         alipay_public_key_string=open(
-            os.path.abspath(os.path.dirname(__file__)) + "/keys/alipay_public_key.pem").read(),
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..")) + "/conf/keys/alipay_public_key.pem").read(),
         # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
         sign_type="RSA2",  # RSA 或者 RSA2
         debug=True  # 默认False
@@ -46,8 +47,9 @@ def order_pay(order_id):
         out_trade_no=order.id,  # 订单编号
         total_amount=str(order.amount / 100.0),  # 总金额
         subject=u"GEEK租房 %s" % order.id,  # 订单标题
-        return_url="http://localhost:8080/payComplete.html",  # 返回的连接地址
-        # return_url="http://192.168.1.10:8080/payComplete.html",  # 返回的连接地址
+        return_url="http://localhost/payComplete.html",  # 返回的连接地址
+        # return_url="http://10.1.61.32/payComplete.html",  # 返回的连接地址
+        # return_url="http://192.168.1.10/payComplete.html",  # 返回的连接地址
         notify_url=None  # 可选, 不填则使用默认notify url
     )
 
@@ -68,10 +70,11 @@ def save_order_payment_result():
     alipay_client = AliPay(
         appid="2021000118650926",
         app_notify_url=None,  # 默认回调url
-        app_private_key_string=open(os.path.abspath(os.path.dirname(__file__)) + "/keys/app_private_key.pem").read(),
+        app_private_key_string=open(
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..")) + "/conf/keys/app_private_key.pem").read(),
         # 私钥
         alipay_public_key_string=open(
-            os.path.abspath(os.path.dirname(__file__)) + "/keys/alipay_public_key.pem").read(),
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..")) + "/conf/keys/alipay_public_key.pem").read(),
         # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
         sign_type="RSA2",  # RSA 或者 RSA2
         debug=True  # 默认False

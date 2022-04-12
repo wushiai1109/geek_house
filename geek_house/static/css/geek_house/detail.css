@@ -1,47 +1,56 @@
 body {
     background-color: #fff;
 }
+
 .container {
     padding: 0px;
 }
+
 .top-bar {
     position: fixed;
     width: 100%;
     background-color: #eee;
     z-index: 2;
 }
+
 .nav-bar {
     width: 100%;
-    height: 35px; 
+    height: 35px;
     text-align: center;
     position: relative;
     border-bottom: 1px solid #eee;
     background-color: #fff;
 }
+
 .page-title {
     display: block;
     line-height: 35px;
     font-size: 20px;
 }
+
 .nav-btn {
-    position: absolute; 
+    position: absolute;
     top: 0;
     left: 10px;
     color: #000;
     font-size: 16px;
 }
-.swiper-container, .swiper-slide img, .landlord-pic>img {
+
+.swiper-container, .swiper-slide img, .landlord-pic > img {
     width: 100%;
 }
-.swiper-container-horizontal>.swiper-pagination-bullets, .swiper-pagination-custom, .swiper-pagination-fraction {
+
+.swiper-container-horizontal > .swiper-pagination-bullets, .swiper-pagination-custom, .swiper-pagination-fraction {
     bottom: 0px;
 }
+
 .swiper-pagination {
     text-align: right;
     font-size: 14px;
     color: #fff;
     padding-right: 10px;
 }
+
 .house-price {
     display: inline-block;
     position: absolute;
@@ -55,49 +64,60 @@ body {
     font-size: 14px;
     z-index: 1;
 }
-.house-price>span {
+
+.house-price > span {
     font-size: 30px;
 }
+
 .detail-con {
     padding: 10px;
     background-color: #eee;
 }
+
 .layout-style {
     background-color: #fff;
     margin-top: 2px;
 }
+
 .detail-header {
     text-align: center;
     border-radius: 6px 6px 0 0;
 }
+
 .landlord-pic {
     display: inline-block;
     width: 60px;
     height: 60px;
-    border-radius: 50%; 
+    border-radius: 50%;
     overflow: hidden;
 }
+
 .house-title {
     font-size: 16px;
     padding: 10px;
 }
+
 .landlord-name {
     font-size: 14px;
     padding: 5px;
 }
-.house-type>li {
+
+.house-type > li {
     padding: 10px 10px 10px 45px;
 }
+
 .icon-text {
     display: inline-block;
     margin-left: 10px;
     font-size: 13px;
     color: #999;
 }
-.icon-text>h3 {
+
+.icon-text > h3 {
     font-size: 14px;
     color: #000;
 }
+
 .icon-house, .icon-sofa, .icon-bed, .icon-room, .icon-user, .wirelessnetwork-ico, .wirednetwork-ico, .shower-ico, .tv-ico, .aircondition-ico, .heater-ico, .smoke-ico, .drinking-ico, .brush-ico, .soap-ico, .slippers-ico, .toiletpaper-ico, .towel-ico, .toiletries-ico, .icebox-ico, .washer-ico, .hotbathtub-ico, .elevator-ico, .iscook-ico, .pet-ico, .meet-ico, .accesssys-ico, .parkingspace-ico, .jinzhi-ico {
     background: url(/static/images/houseicon_sprite.png) 0 0 no-repeat;
     display: inline-block;
@@ -105,68 +125,174 @@ body {
     height: 30px;
     vertical-align: middle;
 }
+
 .icon-user {
     background-position: 0 -163px;
 }
+
 .icon-bed {
     background-position: 0 -206px;
 }
+
 .icon-house, .icon-user, .icon-bed {
     display: inline-block;
     width: 30px;
     height: 30px;
     vertical-align: top;
 }
-.wirelessnetwork-ico{ background-position:0 -716px; height:16px;}
-.wirednetwork-ico{ background-position:0 -888px; height:18px;}
-.shower-ico{ background-position:0 -464px; height:20px;}
-.tv-ico{ background-position:0 -344px; height:16px;}
-.aircondition-ico{ background-position:0 -433px; height:20px;}
-.heater-ico{ background-position:0 -587px; height:20px;}
-.smoke-ico{ background-position:0 -804px; height:20px;}
-.drinking-ico{ background-position:0 -858px; height:20px;}
-.brush-ico{ background-position:0 -831px; height:20px;}
-.soap-ico{ background-position:0 -743px; height:16px;}
-.slippers-ico{ background-position:0 -684px; height:20px;}
-.toiletpaper-ico{ background-position:0 -619px; height:20px;}
-.towel-ico{ background-position:0 -496px; height:20px;}
-.toiletries-ico{ background-position:0 -555px; height:20px;}
-.icebox-ico{ background-position:0 -280px; height:20px;}
-.washer-ico{ background-position:0 -771px; height:20px;}
-.hotbathtub-ico{ background-position:0 -915px; height:20px;}
-.elevator-ico{ background-position:0 -372px; height:20px;}
-.iscook-ico{ background-position:0 -944px; height:18px;}
-.pet-ico{ background-position:0 -312px; height:20px;}
-.meet-ico{ background-position:0 -404px; height:18px;}
-.accesssys-ico{ background-position:0 -527px; height:16px;}
-.parkingspace-ico{ background-position:0 -652px; height:21px;}
-.jinzhi-ico{ background-position:0 -248px; height:20px;}
+
+.wirelessnetwork-ico {
+    background-position: 0 -716px;
+    height: 16px;
+}
+
+.wirednetwork-ico {
+    background-position: 0 -888px;
+    height: 18px;
+}
+
+.shower-ico {
+    background-position: 0 -464px;
+    height: 20px;
+}
+
+.tv-ico {
+    background-position: 0 -344px;
+    height: 16px;
+}
+
+.aircondition-ico {
+    background-position: 0 -433px;
+    height: 20px;
+}
+
+.heater-ico {
+    background-position: 0 -587px;
+    height: 20px;
+}
+
+.smoke-ico {
+    background-position: 0 -804px;
+    height: 20px;
+}
+
+.drinking-ico {
+    background-position: 0 -858px;
+    height: 20px;
+}
+
+.brush-ico {
+    background-position: 0 -831px;
+    height: 20px;
+}
+
+.soap-ico {
+    background-position: 0 -743px;
+    height: 16px;
+}
+
+.slippers-ico {
+    background-position: 0 -684px;
+    height: 20px;
+}
+
+.toiletpaper-ico {
+    background-position: 0 -619px;
+    height: 20px;
+}
+
+.towel-ico {
+    background-position: 0 -496px;
+    height: 20px;
+}
+
+.toiletries-ico {
+    background-position: 0 -555px;
+    height: 20px;
+}
+
+.icebox-ico {
+    background-position: 0 -280px;
+    height: 20px;
+}
+
+.washer-ico {
+    background-position: 0 -771px;
+    height: 20px;
+}
+
+.hotbathtub-ico {
+    background-position: 0 -915px;
+    height: 20px;
+}
+
+.elevator-ico {
+    background-position: 0 -372px;
+    height: 20px;
+}
+
+.iscook-ico {
+    background-position: 0 -944px;
+    height: 18px;
+}
+
+.pet-ico {
+    background-position: 0 -312px;
+    height: 20px;
+}
+
+.meet-ico {
+    background-position: 0 -404px;
+    height: 18px;
+}
+
+.accesssys-ico {
+    background-position: 0 -527px;
+    height: 16px;
+}
+
+.parkingspace-ico {
+    background-position: 0 -652px;
+    height: 21px;
+}
+
+.jinzhi-ico {
+    background-position: 0 -248px;
+    height: 20px;
+}
+
 .house-info, .house-facility {
     padding: 10px 10px 0;
     font-size: 14px;
     color: #999;
 }
-.house-info>h3, .house-facility>h3 {
+
+.house-info > h3, .house-facility > h3 {
     font-size: 16px;
     text-align: center;
     color: #000;
 }
+
 .house-info-list, .house-facility-list {
     margin-top: 10px;
 }
-.house-info-list>li {
+
+.house-info-list > li {
     height: 38px;
     line-height: 38px;
     border-bottom: 1px solid #eee;
 }
-.house-info-list>li>span {
+
+.house-info-list > li > span {
     float: right;
     color: #333;
 }
+
 .house-comment-list {
-   border-bottom: 1px solid #eee; 
+    border-bottom: 1px solid #eee;
 }
-.house-facility-list>li {
+
+.house-facility-list > li {
     float: left;
     width: 50%;
     height: 39px;
@@ -176,6 +302,7 @@ body {
     border-bottom: 1px solid #eee;
     color: #666;
 }
+
 .book-house {
     display: none;
     position: fixed;
@@ -188,7 +315,166 @@ body {
     color: #fff;
     text-align: center;
 }
+
 .book-house:hover {
     text-decoration: none;
     color: #fff;
+}
+.search_input {
+    height: 40px;
+}
+
+.bread_box {
+	width: 1188px;
+    padding: 10px;
+    margin: 0 auto;
+}
+.bread_box a{
+	color: #000;
+}
+.prosum_box {
+    width: 1188px;
+    border: solid 1px #ddd;
+    background: #fff;
+    overflow: hidden;
+    margin: 0 auto 20px;
+}
+
+.prosum_box .prosum_left {
+    margin: 20px;
+    overflow: hidden;
+    width: 684px;
+    float: left;
+}
+
+.prosum_box .prosum_left .big_img {
+    width: 570px;
+    height: 340px;
+}
+
+.prosum_box .prosum_left .little_img img {
+    width: 110px;
+    height: 70px;
+    opacity: 0.6;
+}
+
+.prosum_box .prosum_left .little_img img:hover {
+    opacity: 1.0;
+}
+
+.prosum_box .prosum_left .cur_img img {
+    opacity: 1.0;
+}
+
+.prosum_box .prosum_left .up_img,
+.prosum_box .prosum_left .down_img {
+    width: 110px;
+    height: 20px;
+    background: #333;
+}
+
+.prosum_box .prosum_left .up_img {
+    background: url("../images/arrows.jpg") no-repeat;
+    background-position: 0px -20px;
+}
+
+.prosum_box .prosum_left .up_img_disable {
+    background-position: 0px 0px;
+}
+
+.prosum_box .prosum_left .down_img {
+    background: url("../images/arrows.jpg") no-repeat;
+    background-position: 0px -60px;
+}
+
+.prosum_box .prosum_left .down_img_disable {
+    background-position: 0px -40px;
+}
+
+.prosum_box .prosum_left dt {
+    float: left;
+    margin-right: 4px;
+}
+
+.prosum_box .prosum_left dd {
+    float: left;
+}
+
+.prosum_box .prosum_left dd a {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.prosum_box .prosum_right {
+    float: left;
+    width: 462px;
+    margin: 20px 0px 20px 0px;
+}
+
+.prosum_box .prosum_right .pros_title {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.hot {
+	font-size: 14px;
+	color: #ff4848;
+}
+
+.pros_other {
+	background: #eee;
+	font-size: 14px;
+	padding: 10px 0 10px 10px;
+	margin-top: 10px;
+}
+.pros_other p{
+	line-height: 24px;
+}
+.pros_price {
+	background: #eee;
+	margin-top: 40px;
+	padding: 10px 0 20px 10px;
+}
+.pros_price  .price strong{
+	color: #ff4848;
+	font-size: 26px;
+	font-weight: normal;
+}
+.collect {
+	margin-top: 30px;
+}
+.collect a {
+	font-size: 14px;
+    background: #ff4848;
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.collect .already{
+	background: #ccc;
+}
+.collect a i{
+	font-size: 16px;
+    vertical-align: top;
+    margin-right: 3px;
+}
+.you_need_konw {
+	width: 1188px;
+    margin: 60px auto;
+}
+.you_need_konw span {
+	font-size: 16px;
+	border-bottom: 3px solid #ffc900;
+}
+.notice {
+	border: solid 1px #ddd;
+	padding: 35px 48px;
+}
+.notice p {
+	line-height: 24px;
+	font-size: 16px;
+	margin-bottom: 20px;
 }

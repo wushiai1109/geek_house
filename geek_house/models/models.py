@@ -7,21 +7,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from geek_house.conf import constants
 from geek_house import db
 
-# 做出一个专门的表，存储映射关系
-# 注意：1. 这个表中两个"id"都不是主键，因为是多对多的关系，所以二者都可以有多条数据。
-#  2. 映射表必须在前面定义，否则后面的类引用时，编译器会找不到
-house_facility = db.Table(
-    "geek_house_facility",
-    db.Column("house_id", db.Integer, db.ForeignKey("geek_house_info.id"), primary_key=True),  # 房屋编号
-    db.Column("facility_id", db.Integer, db.ForeignKey("geek_house_facility_info.id"), primary_key=True)  # 设施编号
-)
-# 注意映射表必须在前面定义，否则后面的类引用时，编译器会找不到
-house_favorite = db.Table(
-    "geek_house_favorite",
-    db.Column("user_id", db.Integer, db.ForeignKey("geek_house_user.id"), primary_key=True),  # 用户编号
-    db.Column("house_id", db.Integer, db.ForeignKey("geek_house_info.id"), primary_key=True)  # 房屋编号
-)
-
 
 class BaseModel(object):
     """
@@ -30,6 +15,22 @@ class BaseModel(object):
 
     create_time = db.Column(db.DateTime, default=datetime.now)  # 记录的创建时间
     update_time = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)  # 记录的更新时间
+
+
+# 做出一个专门的表，存储映射关系
+# 注意：1. 这个表中两个"id"都不是主键，因为是多对多的关系，所以二者都可以有多条数据。
+#  2. 映射表必须在前面定义，否则后面的类引用时，编译器会找不到
+GeekHouseFacility = db.Table(
+    "geek_house_facility",
+    db.Column("house_id", db.Integer, db.ForeignKey("geek_house_info.id"), primary_key=True),  # 房屋编号
+    db.Column("facility_id", db.Integer, db.ForeignKey("geek_house_facility_info.id"), primary_key=True)  # 设施编号
+)
+# 注意映射表必须在前面定义，否则后面的类引用时，编译器会找不到
+GeekHouseFavorite = db.Table(
+    "geek_house_favorite",
+    db.Column("user_id", db.Integer, db.ForeignKey("geek_house_user.id"), primary_key=True),  # 用户编号
+    db.Column("house_id", db.Integer, db.ForeignKey("geek_house_info.id"), primary_key=True)  # 房屋编号
+)
 
 
 class GeekHouseUser(BaseModel, db.Model):
@@ -46,16 +47,12 @@ class GeekHouseUser(BaseModel, db.Model):
     real_name = db.Column(db.String(32))  # 真实姓名
     id_card = db.Column(db.String(20))  # 身份证号
     avatar_url = db.Column(db.String(128))  # 用户头像路径
-    favorites = db.relationship("GeekHouseInfo", secondary=house_favorite)  # 用户的收藏
+    favorites = db.relationship("GeekHouseInfo", secondary=GeekHouseFavorite)  # 用户的收藏
     houses = db.relationship("GeekHouseInfo", backref="user")  # 用户发布的房屋
     orders = db.relationship("GeekHouseOrder", backref="user")  # 用户下的订单
 
     # 为什么需要定义Relationships
     # https://segmentfault.com/a/1190000018006031
-
-    def generate_password_hash_demo(self, origin_password):
-        """对密码进行加密"""
-        print(generate_password_hash(origin_password))
 
     # 加上property装饰器后，会把函数变为属性，属性名即为函数名
     @property
@@ -105,9 +102,6 @@ class GeekHouseUser(BaseModel, db.Model):
             "id_card": self.id_card
         }
 
-        favorites = []
-        for favorite in self.favorites:
-            favorites.append(facility.id)
         return auth_dict
 
 
@@ -133,7 +127,8 @@ class GeekHouseInfo(BaseModel, db.Model):
     max_days = db.Column(db.Integer, default=0)  # 最多入住天数，0表示不限制
     order_count = db.Column(db.Integer, default=0)  # 预订完成的该房屋的订单数
     index_image_url = db.Column(db.String(256), default="no_picture")  # 房屋主图片的路径
-    facilities = db.relationship("GeekHouseFacilityInfo", secondary=house_facility)  # 房屋的设施
+    facilities = db.relationship("GeekHouseFacilityInfo", secondary=GeekHouseFacility)  # 房屋的设施
+    favorites = db.relationship("GeekHouseUser", secondary=GeekHouseFavorite, overlaps="favorites")  # 用户的收藏
     images = db.relationship("GeekHouseImage")  # 房屋的图片
     orders = db.relationship("GeekHouseOrder", backref="house")  # 房屋的订单
 
@@ -175,6 +170,7 @@ class GeekHouseInfo(BaseModel, db.Model):
             "deposit": self.deposit,
             "min_days": self.min_days,
             "max_days": self.max_days,
+            "favorite_count": len(self.favorites),
         }
 
         # 房屋图片

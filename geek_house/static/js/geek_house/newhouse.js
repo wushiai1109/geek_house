@@ -34,7 +34,7 @@ $(document).ready(function () {
         // 处理表单数据
         var data = {};
         $("#form-house-info").serializeArray().map(function (x) {
-            data[x.name] = x.value
+            data[x.name] = x.value;
         });
 
         // 收集设置id信息

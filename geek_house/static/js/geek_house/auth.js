@@ -71,7 +71,7 @@ $(document).ready(function () {
                     $("#real-name").prop("disabled", true);
                     $("#id-card").prop("disabled", true);
                     $("#form-auth>input[type=submit]").hide();
-                } else if("4502" == resp.code){
+                } else if ("4502" == resp.code) {
                     alert("认证失败，请检查您的认证信息是否有误！");
                 }
             }

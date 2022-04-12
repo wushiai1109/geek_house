@@ -11,6 +11,90 @@ from sqlalchemy.exc import IntegrityError  # 重复键
 import re
 
 
+@api.route("/users/retrieve", methods=["POST"])
+def retrieve():
+    """
+    重置密码
+    请求的参数： 手机号、短信验证码、密码、确认密码
+    参数格式：json
+    """
+    # 获取请求的json数据，返回字典
+    req_dict = request.get_json()
+
+    mobile = req_dict.get("mobile")
+    sms_code = req_dict.get("sms_code")
+    password = req_dict.get("password")
+    password2 = req_dict.get("password2")
+
+    # 校验参数
+    if not all([mobile, sms_code, password, password2]):
+        return jsonify(code=RET.PARAMERR, msg="参数不完整")
+
+    # 判断手机号格式
+    if not re.match(r"1[34578]\d{9}", mobile):
+        # 表示格式不对
+        return jsonify(code=RET.PARAMERR, msg="手机号格式错误")
+
+    if password != password2:
+        return jsonify(code=RET.PARAMERR, msg="两次密码不一致")
+
+    # 从redis中取出短信验证码
+    try:
+        real_sms_code = redis_store.get("sms_code_%s" % mobile)
+        real_sms_code = real_sms_code.decode()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(code=RET.DBERR, msg="读取真实短信验证码异常")
+
+    # 判断短信验证码是否过期
+    if real_sms_code is None:
+        return jsonify(code=RET.NODATA, msg="短信验证码失效")
+
+    # 删除redis中的短信验证码，防止重复使用校验
+    try:
+        redis_store.delete("sms_code_%s" % mobile)
+    except Exception as e:
+        current_app.logger.error(e)
+
+    # 判断用户填写短信验证码的正确性
+    if real_sms_code != sms_code:
+        return jsonify(code=RET.DATAERR, msg="短信验证码错误")
+
+    # 保存用户的注册数据到数据库中
+    exist_user = GeekHouseUser.query.filter(GeekHouseUser.mobile == mobile).first()
+    if not exist_user:
+        user = GeekHouseUser(name=mobile, mobile=mobile)
+        user.password = password  # 设置属性
+        user.avatar_url = 'default_avatar'
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except IntegrityError as e:
+            # 数据库操作错误后的回滚
+            db.session.rollback()
+            # 表示手机号出现了重复值，即手机号已注册过
+            current_app.logger.error(e)
+            return jsonify(code=RET.DATAEXIST, msg="手机号已存在")
+        except Exception as e:
+            db.session.rollback()
+            # 表示手机号出现了重复值，即手机号已注册过
+            current_app.logger.error(e)
+            return jsonify(code=RET.DBERR, msg="查询数据库异常")
+        # 保存登录状态到session中
+        session["name"] = mobile
+        session["mobile"] = mobile
+        session["user_id"] = user.id
+    else:
+        exist_user.password = password
+        db.session.commit()
+        session["name"] = exist_user.name
+        session["mobile"] = exist_user.mobile
+        session["user_id"] = exist_user.id
+
+    # 返回结果
+    return jsonify(code=RET.OK, msg="重置密码成功")
+
+
 @api.route("/users", methods=["POST"])
 def register():
     """注册
@@ -39,7 +123,8 @@ def register():
 
     # 从redis中取出短信验证码
     try:
-        real_sms_code = redis_store.get("sms_code_%s" % mobile).decode()
+        real_sms_code = redis_store.get("sms_code_%s" % mobile)
+        real_sms_code = real_sms_code.decode()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="读取真实短信验证码异常")
@@ -135,7 +220,8 @@ def login():
     # redis记录： "access_ip_请求的ip": "次数"
     user_ip = request.remote_addr  # 用户的ip地址
     try:
-        access_nums = redis_store.get("access_ip_%s" % user_ip).decode()
+        access_nums = redis_store.get("access_ip_%s" % user_ip)
+        access_nums = access_nums.decode()
     except Exception as e:
         current_app.logger.error(e)
     else:

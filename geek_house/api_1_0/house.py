@@ -4,13 +4,72 @@ from werkzeug.datastructures import ImmutableMultiDict
 from geek_house.api_1_0 import api
 from flask import g, current_app, jsonify, request, session
 from geek_house.conf.response_code import RET
-from geek_house.models.models import GeekHouseInfo, GeekHouseFacilityInfo, GeekHouseImage, GeekHouseOrder
+from geek_house.models.models import GeekHouseInfo, GeekHouseFacilityInfo, GeekHouseImage, GeekHouseOrder, \
+    GeekHouseFacility, GeekHouseFavorite, GeekHouseUser
 from geek_house import db, redis_store
 from geek_house.conf import constants
 from geek_house.utils.login_required import login_required
 from geek_house.utils.image_storage import storage
 from datetime import datetime
 import json
+
+
+@api.route("/houses/favorite", methods=["POST"])
+@login_required
+def set_house_favorite():
+    user_id = g.user_id
+    house_data = request.get_json()
+    house_id = house_data.get("house_id")
+    favorite = house_data.get("favorite")
+    print(favorite)
+    user = GeekHouseUser.query.get(user_id)
+    if favorite:
+        print("1"*100)
+        user.favorites.append((GeekHouseInfo.query.get(house_id)))
+    else:
+        print("2" * 100)
+        user.favorites.remove((GeekHouseInfo.query.get(house_id)))
+    db.session.commit()
+
+    house = GeekHouseInfo.query.get(house_id)
+    house_data = house.to_full_dict()
+    if not house_data.get("img_urls"):
+        house_data["img_urls"] = ['http://www.yanzx.top/no_picture']
+    if GeekHouseInfo.query.get(house_id) in user.favorites:
+        house_data["favorite"] = 1
+    else:
+        house_data["favorite"] = 0
+    json_house = json.dumps(house_data)
+    try:
+        redis_store.setex("house_info_%s" % house_id, constants.HOUSE_DETAIL_REDIS_EXPIRE_SECOND, json_house)
+    except Exception as e:
+        current_app.logger.error(e)
+    return jsonify(code=RET.OK, data={"house": house_data})
+
+
+@api.route("/houses/favorite/<int:house_id>", methods=["GET"])
+@login_required
+def get_house_favorite(house_id):
+    user_id = session.get("user_id", "-1")
+    user = GeekHouseUser.query.get(user_id)
+    if GeekHouseInfo.query.get(house_id) in user.favorites:
+        return jsonify(code=RET.OK, data={"favorite": True})
+    return jsonify(code=RET.OK, data={"favorite": False, "len": len(user.favorites)})
+
+
+@api.route("/user/favorite", methods=["GET"])
+@login_required
+def get_house_favorite_list():
+    user_id = g.user_id
+    user = GeekHouseUser.query.get(user_id)
+    houses = user.favorites
+
+    # 将查询到的房屋信息转换为字典存放到列表中
+    houses_list = []
+    if houses:
+        for house in houses:
+            houses_list.append(house.to_basic_dict())
+    return jsonify(code=RET.OK, msg="OK", data={"houses": houses_list})
 
 
 @api.route("/houses/info", methods=["POST"])
@@ -203,7 +262,7 @@ def get_house_index():
     """获取主页幻灯片展示的房屋基本信息"""
     # 从缓存中尝试获取数据
     try:
-        ret = redis_store.get("house_index_data").decode()
+        ret = redis_store.get("house_index_data")
     except Exception as e:
         current_app.logger.error(e)
         ret = None
@@ -258,7 +317,7 @@ def get_house_detail(house_id):
 
     # 先从redis缓存中获取信息
     try:
-        ret = redis_store.get("house_info_%s" % house_id).decode()
+        ret = redis_store.get("house_info_%s" % house_id)
     except Exception as e:
         current_app.logger.error(e)
         ret = None
@@ -279,6 +338,13 @@ def get_house_detail(house_id):
     # 将房屋对象数据转换为字典
     try:
         house_data = house.to_full_dict()
+        if not house_data.get("img_urls"):
+            house_data["img_urls"] = ['http://www.yanzx.top/no_picture']
+        user = GeekHouseUser.query.get(user_id)
+        if house in user.favorites:
+            house_data["favorite"] = 1
+        else:
+            house_data["favorite"] = 0
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DATAERR, msg="数据出错")
