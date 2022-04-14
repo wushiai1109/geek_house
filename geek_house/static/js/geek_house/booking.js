@@ -92,6 +92,7 @@ $(document).ready(function(){
                         location.href = "/orders.html";
                     }else if ("4503" == resp.code) {
                         alert(resp.msg);
+                        location.href = "/auth.html";
                     }
                 }
             });

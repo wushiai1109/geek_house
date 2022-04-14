@@ -5,6 +5,7 @@ from geek_house.utils.login_required import login_required
 from flask import g, current_app, jsonify, request, session
 from geek_house.conf.response_code import RET
 from geek_house.utils.image_storage import storage
+from geek_house.utils.name_auth import name_auth
 from geek_house.models.models import GeekHouseUser
 from geek_house import db
 from geek_house.conf import constants
@@ -133,8 +134,8 @@ def set_user_auth():
     if not all([real_name, id_card]):
         return jsonify(code=RET.PARAMERR, msg="参数错误")
 
-    # if name_auth(real_name, id_card) != 0:
-    #     return jsonify(code=RET.AUTHERR, msg="认证失败，请检查您的输入信息")
+    if name_auth(real_name, id_card) != 0:
+        return jsonify(code=RET.AUTHERR, msg="认证失败，请检查您的输入信息")
 
     # 保存用户的姓名与身份证号
     try:
