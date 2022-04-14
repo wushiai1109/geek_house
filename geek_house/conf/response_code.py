@@ -20,6 +20,7 @@ class RET:
     SERVERERR = "4500"
     UNKOWNERR = "4501"
     AUTHERR = "4502"
+    NOAUTH = "4503"
 
 
 error_map = {
@@ -42,4 +43,5 @@ error_map = {
     RET.SERVERERR: u"内部错误",
     RET.UNKOWNERR: u"未知错误",
     RET.AUTHERR: u"认证失败，请检查您的认证信息是否有误！",
+    RET.NOAUTH: u"该操作需要先进行实名认证！",
 }

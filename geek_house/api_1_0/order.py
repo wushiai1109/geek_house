@@ -6,7 +6,7 @@ from flask import request, g, jsonify, current_app
 from geek_house import db, redis_store
 from geek_house.utils.login_required import login_required
 from geek_house.conf.response_code import RET
-from geek_house.models.models import GeekHouseInfo, GeekHouseOrder
+from geek_house.models.models import GeekHouseInfo, GeekHouseOrder, GeekHouseUser
 from geek_house.api_1_0 import api
 
 
@@ -15,6 +15,20 @@ from geek_house.api_1_0 import api
 def save_order():
     """保存订单"""
     user_id = g.user_id
+
+    # 在数据库中查询信息
+    try:
+        user = GeekHouseUser.query.get(user_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(code=RET.DBERR, msg="获取用户实名信息失败")
+
+    if user is None:
+        return jsonify(code=RET.NODATA, msg="无效操作")
+
+    auth_dict = user.auth_to_dict()
+    if not auth_dict["real_name"]:
+        return jsonify(code=RET.NOAUTH, msg="该操作需要先进行实名认证！")
 
     # 获取参数
     order_data = request.get_json()

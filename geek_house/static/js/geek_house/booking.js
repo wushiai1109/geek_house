@@ -90,6 +90,8 @@ $(document).ready(function(){
                         showErrorMsg("房间已被抢定，请重新选择日期！");
                     } else if ("0" == resp.code) {
                         location.href = "/orders.html";
+                    }else if ("4503" == resp.code) {
+                        alert(resp.msg);
                     }
                 }
             });

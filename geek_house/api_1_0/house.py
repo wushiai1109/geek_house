@@ -21,13 +21,10 @@ def set_house_favorite():
     house_data = request.get_json()
     house_id = house_data.get("house_id")
     favorite = house_data.get("favorite")
-    print(favorite)
     user = GeekHouseUser.query.get(user_id)
     if favorite:
-        print("1"*100)
         user.favorites.append((GeekHouseInfo.query.get(house_id)))
     else:
-        print("2" * 100)
         user.favorites.remove((GeekHouseInfo.query.get(house_id)))
     db.session.commit()
 
@@ -274,9 +271,7 @@ def get_house_index():
     else:
         try:
             # 查询数据库，返回房屋订单数目最多的5条数据
-            houses = GeekHouseInfo.query.order_by(GeekHouseInfo.order_count.desc(),
-                                                  GeekHouseInfo.id).limit(
-                constants.HOME_PAGE_MAX_HOUSES)
+            houses = GeekHouseInfo.query.order_by(GeekHouseInfo.create_time).limit(constants.HOME_PAGE_MAX_HOUSES)
             # houses = GeekHouseInfo.query.order_by(GeekHouseInfo.create_time.desc()).limit(
             #     constants.HOME_PAGE_MAX_HOUSES)
         except Exception as e:
