@@ -41,7 +41,8 @@ def retrieve():
     # 从redis中取出短信验证码
     try:
         real_sms_code = redis_store.get("sms_code_%s" % mobile)
-        real_sms_code = real_sms_code.decode()
+        if real_sms_code:
+            real_sms_code = real_sms_code.decode()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="读取真实短信验证码异常")
@@ -124,7 +125,8 @@ def register():
     # 从redis中取出短信验证码
     try:
         real_sms_code = redis_store.get("sms_code_%s" % mobile)
-        real_sms_code = real_sms_code.decode()
+        if real_sms_code:
+            real_sms_code = real_sms_code.decode()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="读取真实短信验证码异常")
@@ -221,7 +223,8 @@ def login():
     user_ip = request.remote_addr  # 用户的ip地址
     try:
         access_nums = redis_store.get("access_ip_%s" % user_ip)
-        access_nums = access_nums.decode()
+        if access_nums:
+            access_nums = access_nums.decode()
     except Exception as e:
         current_app.logger.error(e)
     else:

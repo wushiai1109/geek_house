@@ -27,10 +27,12 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue(check_password_hash(hash_password, mobile))
         self.assertTrue(hash_password_test != hash_password)
 
+    def test_path(self):
+        import os
+        path = os.path.dirname(__file__)
+        print(os.path.abspath(os.path.join(path, "..")))
+        self.assertTrue(True)
+
 
 if __name__ == '__main__':
-    import os
-
-    path = os.path.dirname(__file__)
-    print(os.path.abspath(os.path.join(path, "..")))
-    # unittest.main()
+    unittest.main()

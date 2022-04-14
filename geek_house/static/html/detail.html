@@ -37,7 +37,7 @@
     <script id="house-detail-tmpl" type="text/html">
         {{ if "0" == house.favorite }}
         <div class="house-info layout-style">
-            <h3>收藏房屋</h3>
+            <h3 style="color:#ff6666;">收藏房屋</h3>
             <div class="house-info-list text-center">
                 <a href="#" onclick="addFavorite();"><i class="glyphicon glyphicon-heart-empty"></i>点击收藏</a>
                 <span>已有{{ house.favorite_count }}人收藏</span>
@@ -45,7 +45,7 @@
         </div>
         {{ else }}
         <div class="house-info layout-style">
-            <h3>取消收藏</h3>
+            <h3 style="color:#ff6666;">收藏房屋</h3>
             <div class="house-info-list text-center">
                 <a href="#" onclick="removeFavorite();"><i class="glyphicon glyphicon-heart"></i>点击取消</a>
                 <span>已有{{ house.favorite_count }}人收藏</span>

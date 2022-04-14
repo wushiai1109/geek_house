@@ -65,7 +65,8 @@ def get_sms_code(mobile):
     # 从redis中取出真实的图片验证码
     try:
         real_image_code = redis_store.get("image_code_%s" % image_code_id)
-        real_image_code = real_image_code.decode()
+        if real_image_code:
+            real_image_code = real_image_code.decode()
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(code=RET.DBERR, msg="redis数据库异常")
@@ -90,7 +91,8 @@ def get_sms_code(mobile):
     # 判断对于这个手机号的操作，在60秒内有没有之前的记录，如果有，则认为用户操作频繁，不接受处理
     try:
         send_flag = redis_store.get("send_sms_code_%s" % mobile)
-        send_flag = send_flag.decode()
+        if send_flag:
+            send_flag = send_flag.decode()
     except Exception as e:
         current_app.logger.error(e)
     else:
