@@ -2,8 +2,6 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-# 引入session，当成一个请求的上下文，一个对象来进行存储、提取操作，session数据放在了后端-redis中
-# Flask-Session https://lienze.tech/archives/181/  https://www.cnblogs.com/cnhyk/p/12755994.html  https://ziperlee.github.io/2019/03/25/flask%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2%E5%8F%8Aflask-session/
 from flask_session import Session
 from flask_wtf import CSRFProtect
 
@@ -30,7 +28,7 @@ class Config(object):
     # 实际中使用redis的服务器不是同一台
     SESSION_REDIS = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
     SESSION_USE_SIGNER = True  # 对cookie中session_id进行隐藏处理
-    PERMANENT_SESSION_LIFETIME = 86400  # session数据的有效期，单位秒
+    PERMANENT_SESSION_LIFETIME = 7200  # session数据的有效期，单位秒
 
 
 app.config.from_object(Config)

@@ -26,14 +26,14 @@ def send_message1():
 
 
 # 单例模式
-class CCP(object):
+class SendMessageUtil(object):
     """自己封装的发送短信的辅助类"""
     # 用来保存对象的类属性
     instance = None
 
     def __new__(cls):
         if cls.instance is None:
-            obj = super(CCP, cls).__new__(cls)
+            obj = super(SendMessageUtil, cls).__new__(cls)
             # 初始化SDK
             obj.sdk = SmsSDK(accId, accToken, appId)
             cls.instance = obj
@@ -42,8 +42,8 @@ class CCP(object):
     def send_message(self, tid, mobile, datas):
         result = self.sdk.sendMessage(tid, mobile, datas)
         status_code = json.loads(result).get("statusCode")
-        if status_code == "000000" or status_code == "112310": # 测试可用
-        # if status_code == "000000":
+        if status_code == "000000" or status_code == "112310":  # 测试可用
+            # if status_code == "000000":
             # 表示发送短信成功
             return 0
         else:

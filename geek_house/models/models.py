@@ -3,7 +3,6 @@
 from datetime import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from geek_house.conf import constants
 from geek_house import db
 
@@ -50,9 +49,6 @@ class GeekHouseUser(BaseModel, db.Model):
     favorites = db.relationship("GeekHouseInfo", secondary=GeekHouseFavorite)  # 用户的收藏
     houses = db.relationship("GeekHouseInfo", backref="user")  # 用户发布的房屋
     orders = db.relationship("GeekHouseOrder", backref="user")  # 用户下的订单
-
-    # 为什么需要定义Relationships
-    # https://segmentfault.com/a/1190000018006031
 
     # 加上property装饰器后，会把函数变为属性，属性名即为函数名
     @property
