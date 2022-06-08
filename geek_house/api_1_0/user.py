@@ -11,13 +11,6 @@ from geek_house import db
 from geek_house.conf import constants
 
 
-@api.route("/demo/<string:chat_content>", methods=["GET"])
-@login_required
-def chat_demo(chat_content):
-    chat_content = chat_content + "~" * 10
-    return chat_content
-
-
 @api.route("/users/avatar", methods=["POST"])
 @login_required
 def set_user_avatar():
@@ -141,9 +134,8 @@ def set_user_auth():
     if not all([real_name, id_card]):
         return jsonify(code=RET.PARAMERR, msg="参数错误")
 
-    if 1 == 2:
-        if name_auth(real_name, id_card) != 0:
-            return jsonify(code=RET.AUTHERR, msg="认证失败，请检查您的输入信息")
+    if name_auth(real_name, id_card) != 0:
+        return jsonify(code=RET.AUTHERR, msg="认证失败，请检查您的输入信息")
 
     # 保存用户的姓名与身份证号
     try:

@@ -42,8 +42,8 @@ class SendMessageUtil(object):
     def send_message(self, tid, mobile, datas):
         result = self.sdk.sendMessage(tid, mobile, datas)
         status_code = json.loads(result).get("statusCode")
-        if status_code == "000000" or status_code == "112310":  # 测试可用
-            # if status_code == "000000":
+        # if status_code == "000000" or status_code == "112310":  # 测试可用
+        if status_code == "000000":
             # 表示发送短信成功
             return 0
         else:
