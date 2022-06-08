@@ -31,7 +31,7 @@ def set_house_favorite():
     house = GeekHouseInfo.query.get(house_id)
     house_data = house.to_full_dict()
     if not house_data.get("img_urls"):
-        house_data["img_urls"] = ['http://www.yanzx.top/no_picture']
+        house_data["img_urls"] = ['http://rd52d6n5l.hd-bkt.clouddn.com/no_picture']
     if GeekHouseInfo.query.get(house_id) in user.favorites:
         house_data["favorite"] = 1
     else:
@@ -304,7 +304,7 @@ def get_house_detail(house_id):
     # 前端在房屋详情页面展示时，如果浏览页面的用户不是该房屋的房东，则展示预定按钮，否则不展示，
     # 所以需要后端返回登录用户的user_id
     # 尝试获取用户登录的信息，若登录，则返回给前端登录用户的user_id，否则返回user_id=-1
-    user_id = session.get("user_id", "-1")
+    user_id = session.get("user_id", 0)
 
     # 校验参数
     if not house_id:
@@ -334,10 +334,13 @@ def get_house_detail(house_id):
     try:
         house_data = house.to_full_dict()
         if not house_data.get("img_urls"):
-            house_data["img_urls"] = ['http://www.yanzx.top/no_picture']
-        user = GeekHouseUser.query.get(user_id)
-        if house in user.favorites:
-            house_data["favorite"] = 1
+            house_data["img_urls"] = ['http://rd52d6n5l.hd-bkt.clouddn.com/no_picture']
+        if user_id:
+            user = GeekHouseUser.query.get(user_id)
+            if house in user.favorites:
+                house_data["favorite"] = 1
+            else:
+                house_data["favorite"] = 0
         else:
             house_data["favorite"] = 0
     except Exception as e:

@@ -16,7 +16,7 @@ LOGIN_ERROR_MAX_TIMES = 5
 LOGIN_ERROR_FORBID_TIME = 600
 
 # 七牛云访问域名
-QINIU_URL_DOMAIN = "http://www.yanzx.top/"
+QINIU_URL_DOMAIN = "http://rd52d6n5l.hd-bkt.clouddn.com/"
 
 # 地址信息的缓存时间, 单位：秒
 AREA_INFO_REDIS_CACHE_EXPIRES = 7200
